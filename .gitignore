@@ -1,0 +1,25 @@
+# Compiled output
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# IDEs and editors
+.vscode/
+*.suo
+*.njsproj
+*.sln
+*.swp
+
+# Testing
+coverage/
+
+# Debug files
+*.log
+
+# System files
+.DS_Store
+
+# Environment variables
+.env

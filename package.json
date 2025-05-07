@@ -1,0 +1,23 @@
+{
+  "name": "kora_restaurant",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShowSkillsSpark/kora_restaurant.git"
+  },
+  "author": "실력발휘",
+  "homepage": "https://github.com/ShowSkillsSpark/kora_restaurant",
+  "scripts": {
+    "dev": "vite --config vite/config.dev.mjs",
+    "build": "vite build --config vite/config.prod.mjs",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "phaser": "^3.88.2",
+    "terser": "^5.39.0"
+  }
+}
