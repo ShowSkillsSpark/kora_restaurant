@@ -54,7 +54,7 @@ class Order extends GameObjects.Container {
         scene.add.existing(this);
 
         const bg = scene.add.image(0, - height / 10, 'talk').setOrigin(0.5);
-        bg.setScale(width / bg.width, height / bg.height * 0.8);
+        bg.setScale(width / bg.width, height / bg.height * 0.7);
 
         this.text = scene.add.text(0, - 3 * height / 20, "코라떡볶이 1인분이랑,\n수돗물 1컵 주세요", {
             fontSize: height * 0.15,
@@ -62,9 +62,12 @@ class Order extends GameObjects.Container {
             fontFamily: "StudyHard",
             wordWrap: { width: width - 20 },
         }).setOrigin(0.5).setPadding(10);
-        this.face = scene.add.image(0, 7 * height / 20, "smile").setOrigin(0.5);
-        this.face.setScale(height / this.face.height * 0.35);
-        this.add([bg, this.text, this.face]);
+        this.face = scene.add.image(0, 5 * height / 20, "smile").setOrigin(0.5);
+        this.face.setScale(height / this.face.height * 0.25);
+        const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('order');
+        zone.setData('order', this);
+
+        this.add([bg, this.text, this.face, zone]);
     }
 
     static preload(scene: Scene) {
@@ -88,39 +91,6 @@ class Order extends GameObjects.Container {
     }
 }
 
-class Ingredient extends GameObjects.Container {
-    constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
-        super(scene, x, y);
-        scene.add.existing(this);
-        
-        const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
-        const text = scene.add.text(0, 0, name, {
-            fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
-        }).setOrigin(0.5).setPadding(10);
-
-        this.add([bg, text]);
-    }
-}
-class Tap extends GameObjects.Container {
-    constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
-        super(scene, x, y);
-        scene.add.existing(this);
-        
-        const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
-        const text = scene.add.text(0, 0, name, {
-            fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
-        }).setOrigin(0.5).setPadding(10);
-        const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('tap');
-        zone.setData('use', false);
-
-        this.add([bg, text, zone]);
-    }
-}
-
 class Table extends GameObjects.Container {
     constructor(scene: Scene, x: number, y:number, width: number, height: number) {
         super(scene, x, y);
@@ -136,20 +106,111 @@ class Table extends GameObjects.Container {
     }
 }
 
+class Ingredient extends GameObjects.Container {
+    returnX: number;
+    returnY: number;
+
+    constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
+        super(scene, x, y);
+        scene.add.existing(this);
+        this.returnX = x;
+        this.returnY = y;
+        this.name = name;
+        
+        const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
+        const text = scene.add.text(0, 0, name, {
+            fontSize: height / 2,
+            color: "#ff0000",
+            fontFamily: "StudyHard",
+        }).setOrigin(0.5).setPadding(10);
+
+        this.add([bg, text]);
+
+        this.setSize(width, height).setInteractive({ draggable: true });
+        this.on('dragstart', (pointer: Input.Pointer) => {
+            scene.children.bringToTop(this);
+        });
+        this.on('drag', (pointer: Input.Pointer, dragX: number, dragY: number) => {
+            this.setPosition(dragX, dragY);
+        });
+        this.on('dragend', (pointer: Input.Pointer, dragX: number, dragY: number, dropped: boolean) => {
+            this.setPosition(this.returnX, this.returnY);
+        });
+        this.on('drop', (pointer: Input.Pointer, dropZone: GameObjects.Zone) => {
+            const tool = dropZone.getData('tool');
+            if (tool) {
+                tool.putIngredient(this.name);
+            }
+            this.setPosition(this.returnX, this.returnY);
+        });
+    }
+}
+class IngredientPosition extends GameObjects.Container {
+    width: number;
+    height: number;
+    
+    constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
+        super(scene, x, y);
+        scene.add.existing(this);
+        this.width = width;
+        this.height = height;
+        this.name = name;
+        
+        const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
+        const text = scene.add.text(0, 0, name, {
+            fontSize: height / 2,
+            color: "#000000",
+            fontFamily: "StudyHard",
+        }).setOrigin(0.5).setPadding(10);
+
+        this.add([bg, text]);
+    }
+
+    createIngredients() {
+        const x = this.parentContainer.x + this.x;
+        const y = this.parentContainer.y + this.y;
+        const width = this.width * 0.8;
+        const height = this.height * 0.8;
+        new Ingredient(this.scene, x, y, width, height, this.name);
+        new Ingredient(this.scene, x, y, width, height, this.name);
+    }
+}
+class Tap extends GameObjects.Container {
+    constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
+        super(scene, x, y);
+        scene.add.existing(this);
+        this.name = name;
+        
+        const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
+        const text = scene.add.text(0, 0, name, {
+            fontSize: height / 2,
+            color: "#000000",
+            fontFamily: "StudyHard",
+        }).setOrigin(0.5).setPadding(10);
+        const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('tap');
+        zone.setData('tool', null);
+
+        this.add([bg, text, zone]);
+    }
+}
 class IngredientShelf extends GameObjects.Container {
     constructor(scene: Scene, x: number, y:number, width: number, height: number) {
         super(scene, x, y);
         scene.add.existing(this);
 
-        const rice_cake = new Ingredient(scene, - 7 * width / 16, 0, width / 8, height / 2, "떡");
-        const sauce = new Ingredient(scene, - 5 * width / 16, 0, width / 8, height / 2, "특제소스");
-        const fish_cake = new Ingredient(scene, - 3 * width / 16, 0, width / 8, height / 2, "어묵");
-        const spring_onion = new Ingredient(scene, - 1 * width / 16, 0, width / 8, height / 2, "파");
-        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height / 2, "물");
+        const rice_cake = new IngredientPosition(scene, - 7 * width / 16, 0, width / 8, height / 2, "떡");
+        const sauce = new IngredientPosition(scene, - 5 * width / 16, 0, width / 8, height / 2, "특제소스");
+        const fish_cake = new IngredientPosition(scene, - 3 * width / 16, 0, width / 8, height / 2, "어묵");
+        const spring_onion = new IngredientPosition(scene, - 1 * width / 16, 0, width / 8, height / 2, "파");
+        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height / 2, "수돗물");
         const cider_tap = new Tap(scene, 5 * width / 16, 0, width / 8, height / 2, "사이다");
         const cola_tap = new Tap(scene, 7 * width / 16, 0, width / 8, height / 2, "콜라");
 
         this.add([rice_cake, sauce, fish_cake, spring_onion, water_tap, cider_tap, cola_tap]);
+
+        [rice_cake, sauce, fish_cake, spring_onion].forEach((position: IngredientPosition) => {
+            position.createIngredients();
+        });
     }
 }
 
@@ -165,7 +226,7 @@ class Burner extends GameObjects.Container {
             fontFamily: "StudyHard",
         }).setOrigin(0.5).setPadding(10);
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('burner');
-        zone.setData('use', false);
+        zone.setData('tool', null);
 
         this.add([bg, text, zone]);
     }
@@ -192,6 +253,8 @@ class Tool extends GameObjects.Container {
     returnX: number;
     returnY: number;
     lastZone: GameObjects.Zone | null = null;
+    box: Set<string> = new Set<string>();
+    box_text: GameObjects.Text;
 
     constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
         super(scene, x, y);
@@ -203,13 +266,19 @@ class Tool extends GameObjects.Container {
         this.name = name;
 
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
-        const text = scene.add.text(0, 0, name, {
+        const text = scene.add.text(0, -height / 4, name, {
             fontSize: height / 2,
             color: "#ff0000",
             fontFamily: "StudyHard",
         }).setOrigin(0.5).setPadding(10);
+        this.box_text = scene.add.text(0, height / 4, '', {
+            fontSize: height / 4,
+            color: "#ff0000",
+            fontFamily: "StudyHard",
+            wordWrap: { width: width * 0.9 },
+        }).setOrigin(0.5).setPadding(10);
 
-        this.add([bg, text]);
+        this.add([bg, text, this.box_text]);
 
         this.setSize(width, height).setInteractive({ draggable: true });
         this.on('dragstart', (pointer: Input.Pointer) => {
@@ -228,35 +297,62 @@ class Tool extends GameObjects.Container {
                 case 'burner':
                     if (this.name === '컵') {
                         this.setPosition(this.returnX, this.returnY);
-                    } else if (dropZone.getData('use')) {
+                    } else if (dropZone.getData('tool')) {
                         this.setPosition(this.returnX, this.returnY);
                     } else {
-                        this.lastZone?.setData('use', false);
-                        dropZone.setData('use', true);
+                        this.lastZone?.setData('tool', null);
+                        dropZone.setData('tool', this);
+                        this.lastZone = dropZone;
                         this.returnX = dropZone.parentContainer.parentContainer.x + dropZone.parentContainer.x + dropZone.x;
                         this.returnY = dropZone.parentContainer.parentContainer.y + dropZone.parentContainer.y + dropZone.y;
                         this.setPosition(this.returnX, this.returnY);
+                    }
+                    break;
+                case 'tap':
+                    if (dropZone.getData('tool')) {
+                        this.setPosition(this.returnX, this.returnY);
+                    } else {
+                        this.lastZone?.setData('tool', null);
+                        dropZone.setData('tool', this);
                         this.lastZone = dropZone;
+                        this.returnX = dropZone.parentContainer.parentContainer.x + dropZone.parentContainer.x + dropZone.x;
+                        this.returnY = dropZone.parentContainer.parentContainer.y + dropZone.parentContainer.y + dropZone.y;
+                        this.setPosition(this.returnX, this.returnY);
+                        this.putIngredient(dropZone.parentContainer.name);
                     }
                     break;
                 case 'trash':
-                    this.lastZone?.setData('use', false);
-                    this.returnX = this.toolX;
-                    this.returnY = this.toolY;
-                    this.setPosition(this.returnX, this.returnY);
-                    this.lastZone = null;
+                    this.initTool();
                     break;
-                case 'tap':
-                    this.lastZone?.setData('use', false);
-                    this.returnX = dropZone.parentContainer.parentContainer.x + dropZone.parentContainer.x + dropZone.x;
-                    this.returnY = dropZone.parentContainer.parentContainer.y + dropZone.parentContainer.y + dropZone.y;
-                    this.setPosition(this.returnX, this.returnY);
+                case 'order':
+                    this.lastZone?.setData('tool', null);
                     this.lastZone = dropZone;
+                    this.returnX = dropZone.parentContainer.x + dropZone.x;
+                    this.returnY = dropZone.parentContainer.y + dropZone.y;
+                    this.setPosition(this.returnX, this.returnY);
+                    this.setInteractive({ draggable: false });
                     break;
                 default:
                     break;
             }
         });
+    }
+
+    putIngredient(ingredient: string) {
+        this.box.add(ingredient);
+        this.box_text.setText(Array.from(this.box).join(' '));
+    }
+    clearIngredient() {
+        this.box.clear();
+        this.box_text.setText('');
+    }
+    initTool() {
+        this.lastZone?.setData('tool', null);
+        this.lastZone = null;
+        this.returnX = this.toolX;
+        this.returnY = this.toolY;
+        this.setPosition(this.returnX, this.returnY);
+        this.clearIngredient();
     }
 }
 class ToolShelf extends GameObjects.Container {
@@ -313,9 +409,9 @@ class Cooking extends GameObjects.Container {
 
         this.add([burner_0, burner_1, burner_2, burner_3, pot, steamer, cup, trash]);
 
-        pot.createTools();
-        steamer.createTools();
-        cup.createTools();
+        [pot, steamer, cup].forEach((toolShelf: ToolShelf) => {
+            toolShelf.createTools();
+        });
     }
 }
 
@@ -334,10 +430,10 @@ export class MainGame extends Scene {
         new TopBar(this, WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10);
         // 주문서
         // this.add.rectangle(WIDTH / 2, 5 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0x00ffff, 1).setStrokeStyle(5, 0x000000);
-        new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 3 * HEIGHT / 10);
-        new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 3 * HEIGHT / 10);
-        new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 3 * HEIGHT / 10);
-        new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 3 * HEIGHT / 10);
+        new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
+        new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
+        new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
+        new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
         // 책상
         // this.add.rectangle(WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Table(this, WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10);
@@ -347,34 +443,6 @@ export class MainGame extends Scene {
         // 조리
         // this.add.rectangle(WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Cooking(this, WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10);
-
-        // 쟈코라면
-        // 냄비
-        // 수돗물
-        // 면
-        // 스프
-        // 계란
-        // 파
-
-        // 코라떡볶이
-        // 냄비
-        // 수돗물
-        // 떡
-        // 양념
-        // 오뎅
-        // 파
-
-        // 난데순대
-        // 찜기
-        // 순대
-
-        // 대두왕만두
-        // 찜기
-        // 만두
-
-        // 음료
-        // 우루사이다
-        // 수돗물
     }
 
     // 주문서 추가
