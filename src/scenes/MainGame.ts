@@ -1,73 +1,283 @@
-import { Game, GameObjects, Geom, Input, Scene } from "phaser";
-import { HEIGHT, WIDTH } from "../constants";
+import { GameObjects, Geom, Input, Scene } from 'phaser';
+import { DrinkName, FoodName, HEIGHT, IngredientName, PROGRESS_LIST, ToolName, WIDTH } from '../constants';
 
 class TopBar extends GameObjects.Container {
-    time: GameObjects.Text;
-    earn: GameObjects.Text;
+    time_text: GameObjects.Text;
+    remain_timer: Phaser.Time.TimerEvent;
+    remain_time: number;
+    elapsed: number;
 
-    constructor(scene: Scene, x: number, y:number, width: number, height: number) {
+    earn_text: GameObjects.Text;
+
+    constructor(scene: Scene, x: number, y:number, width: number, height: number, remain_time: number) {
         super(scene, x, y);
         scene.add.existing(this);
+        this.remain_time = remain_time;
+        this.elapsed = 0;
+        sessionStorage.setItem('earn', '0');
 
         // 영업시간
-        const timeText = scene.add.text(-width / 4 - 100, 0, "남은 시간", {
+        const timeText = scene.add.text(-width / 4 - 100, 0, '남은 시간', {
             fontSize: height / 2,
-            color: "#ffffff",
-            fontFamily: "StudyHard",
-            stroke: "#000000",
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
             strokeThickness: 4,
         }).setOrigin(0.5);
-        this.time = scene.add.text(-width / 4 + 100, 0, "90초", {
+        this.time_text = scene.add.text(-width / 4 + 100, 0, this.remain_time + ' 초', {
             fontSize: height / 2,
-            color: "#ffffff",
-            fontFamily: "StudyHard",
-            stroke: "#000000",
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
             strokeThickness: 4,
         }).setOrigin(0.5).setPadding(10);
-        this.add([timeText, this.time]);
+        this.add([timeText, this.time_text]);
 
         // 매출
-        const earnText = scene.add.text(width / 4 - 100, 0, "매출", {
+        const earnText = scene.add.text(width / 4 - 100, 0, '매출', {
             fontSize: height / 2,
-            color: "#ffffff",
-            fontFamily: "StudyHard",
-            stroke: "#000000",
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
             strokeThickness: 4,
         }).setOrigin(0.5);
-        this.earn = scene.add.text(width / 4 + 100, 0, "5,000원", {
+        this.earn_text = scene.add.text(width / 4 + 100, 0, '0' + ' 치즈', {
             fontSize: height / 2,
-            color: "#ffffff",
-            fontFamily: "StudyHard",
-            stroke: "#000000",
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
             strokeThickness: 4,
         }).setOrigin(0.5).setPadding(10);
-        this.add([earnText, this.earn]);
+        this.add([earnText, this.earn_text]);
+
+        this.remain_timer = scene.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.elapsed += 1;
+                if (this.elapsed > this.remain_time) {
+                    scene.scene.start('GameOver');
+                } else {
+                    this.time_text.setText((this.remain_time - this.elapsed) + ' 초');
+                }
+            },
+            loop: true,
+            paused: true,
+        });
+    }
+
+    resetTimer() {
+        this.remain_timer.paused = true;
+        this.elapsed = 0;
+    }
+    startTimer() {
+        this.remain_timer.paused = false;
+    }
+    addEarn(price: number) {
+        let earn = parseInt(sessionStorage.getItem('earn') || '0');
+        earn += price;
+        sessionStorage.setItem('earn', earn.toString());
+        this.earn_text.setText(earn.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈');
     }
 }
 
-class Order extends GameObjects.Container {
+class Food {
+    name: string;
+    base_price: number;
+    plus_price: number;
+    tool_name: string;
+    necessary: Set<string>;
+    plus: Set<string>;
+    temperature_range: number[][];
+
+    constructor(name: string, base_price: number, plus_price: number, tool_name: string, neccessary: string[], plus: string[], temperature_range: number[][]) {
+        this.name = name;
+        this.base_price = base_price;
+        this.plus_price = plus_price;
+        this.tool_name = tool_name;
+        this.necessary = new Set(neccessary);
+        this.plus = new Set(plus);
+        this.temperature_range = temperature_range;
+    }
+
+    calculatePrice(tool: Tool) {
+        if (this.tool_name != tool.name) return 0;
+        let base = 0;
+        let score = 0;
+        tool.box.forEach((ingredient_name: string) => {
+            if (this.necessary.has(ingredient_name)) {
+                base += 1;
+            } else if (this.plus.has(ingredient_name)) {
+                score += 1;
+            } else {
+                score -= 1;
+            }
+        });
+        if (base < this.necessary.size) return 0;
+        let temperature_score = 0;
+        for (let r of this.temperature_range) {
+            const temp = r[0];
+            if (tool.temperature > temp) temperature_score = r[1];
+            else break;
+        }
+        return this.base_price + (score + temperature_score) * this.plus_price;
+    }
+
+    toString() { return this.name; }
+
+    static kora_tteokbokki = new Food(FoodName.KORA_TTEOKBOKKI, 4000, 500, ToolName.POT,
+        [IngredientName.WATER, IngredientName.RICE_CAKE, IngredientName.SAUSE], [IngredientName.FISH_CAKE, IngredientName.SPRING_ONION],
+        [[0, -8], [5, 1], [8, 2], [10, -8]]);
+}
+class Drink extends Food {
+    static tap_water = new Food(DrinkName.TAP_WATER, 1000, 100, ToolName.CUP,
+        [IngredientName.WATER], [],
+        [[0, 0]]);
+    static uru_cider = new Food(DrinkName.URU_CIDER, 1000, 100, ToolName.CUP,
+        [IngredientName.CIDER], [],
+        [[0, 0]]);
+    static kora_cola = new Food(DrinkName.KORA_COLA, 1000, 100, ToolName.CUP,
+        [IngredientName.COLA], [],
+        [[0, 0]]);
+}
+export class Order extends GameObjects.Container {
     text: GameObjects.Text;
     face: GameObjects.Image;
 
-    constructor(scene: Scene, x: number, y:number, width: number, height: number) {
+    requirement_list: Food[] = [];
+    tool_list: Tool[] = [];
+    cost: number = 0;
+
+    progress: string[] = [];
+    progress_timer: Phaser.Time.TimerEvent;
+    progress_index: number = 0;
+
+    respawn_timer: Phaser.Time.TimerEvent;
+
+    constructor(scene: Scene, x: number, y:number, width: number, height: number, callback_submit: (price: number) => void) {
         super(scene, x, y);
         scene.add.existing(this);
 
         const bg = scene.add.image(0, - height / 10, 'talk').setOrigin(0.5);
         bg.setScale(width / bg.width, height / bg.height * 0.7);
 
-        this.text = scene.add.text(0, - 3 * height / 20, "코라떡볶이 1인분이랑,\n수돗물 1컵 주세요", {
+        this.text = scene.add.text(0, - 3 * height / 20, '콘레이', {
             fontSize: height * 0.15,
-            color: "#000000",
-            fontFamily: "StudyHard",
-            wordWrap: { width: width - 20 },
+            color: '#000000',
+            fontFamily: 'StudyHard',
+            wordWrap: { width: width * 0.9 },
         }).setOrigin(0.5).setPadding(10);
-        this.face = scene.add.image(0, 5 * height / 20, "smile").setOrigin(0.5);
+        this.face = scene.add.image(0, 5 * height / 20, 'smile').setOrigin(0.5);
         this.face.setScale(height / this.face.height * 0.25);
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('order');
         zone.setData('order', this);
 
         this.add([bg, this.text, this.face, zone]);
+
+        this.setSize(width, height);
+        this.updateText();
+
+        this.progress_timer = scene.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.progress_index += 1;
+                if (this.progress_index < this.progress.length) {
+                    this.text.setText(this.progress[this.progress_index]);
+                } else {
+                    this.tool_list.forEach((tool: Tool) => {
+                        tool.returnTool();
+                    });
+                    this.visible = false;
+                    this.respawn_timer.paused = false;
+                    callback_submit(this.cost);
+                    this.cost = 0;
+                }
+            },
+            loop: true,
+            paused: true,
+        });
+        this.respawn_timer = scene.time.addEvent({
+            delay: 1000,
+            callback: () => { this.newOrder(); },
+            loop: false,
+            paused: true,
+        });
+    }
+
+    submit(tool: Tool) {
+        tool.disableInteractive();
+
+        this.tool_list.push(tool);
+        const len = this.tool_list.length;
+        this.tool_list.forEach((tool: Tool, index: number) => {
+            const x = this.x - this.width / 2 + (index + 1) * this.width / (len + 1);
+            const y = this.y + this.height / 2;
+            tool.move(x, y);
+        });
+
+        let best_fit_index = null;
+        let best_price = 0;
+        this.requirement_list.forEach((food: Food, index: number) => {
+            const food_price = food.calculatePrice(tool);
+            if (food_price > best_price) {
+                best_fit_index = index;
+                best_price = food_price;
+            }
+        });
+        if (best_fit_index != null) {
+            this.requirement_list.splice(best_fit_index, 1);
+            this.updateText();
+            this.cost += best_price;
+        }
+        if (this.requirement_list.length == 0) {
+            this.progress_timer.paused = false;
+        }
+    }
+    updateText() {
+        if (this.requirement_list.length > 0) {
+            const text = this.requirement_list.join(', ') + ' 주세요.';
+            this.text.setText(text);
+        } else {
+            this.text.setText(this.progress[this.progress_index]);
+        }
+    }
+    randomRequirementList() {
+        const requirement_list = [];
+        while(requirement_list.length == 0) {
+            // 수돗물단 버전
+            // const food_list = [null];
+            // const drink_list = [Drink.tap_water];
+            // 일반 버전
+            const food_list = [Food.kora_tteokbokki, null];
+            const drink_list = [Drink.tap_water, Drink.uru_cider, Drink.kora_cola, null];
+            const food = food_list[Math.floor(Math.random() * food_list.length)];
+            const drink = drink_list[Math.floor(Math.random() * drink_list.length)];
+            if (food) requirement_list.push(food);
+            if (drink) requirement_list.push(drink);
+        }
+        return requirement_list;
+    }
+    randomProgress() {
+        return PROGRESS_LIST[Math.floor(Math.random() * PROGRESS_LIST.length)];
+    }
+    newOrder() {
+        this.requirement_list = this.randomRequirementList();
+        this.updateText();
+
+        this.tool_list = [];
+        this.cost = 0;
+
+        this.progress = this.randomProgress();
+        this.progress_index = 0;
+        this.progress_timer.paused = true;
+
+        this.respawn_timer.reset({
+            delay: 1000,
+            callback: () => { this.newOrder(); },
+            loop: false,
+            paused: true,
+        });
+
+        this.visible = true;
     }
 
     static preload(scene: Scene) {
@@ -120,8 +330,8 @@ class Ingredient extends GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, name, {
             fontSize: height / 2,
-            color: "#ff0000",
-            fontFamily: "StudyHard",
+            color: '#ff0000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
 
         this.add([bg, text]);
@@ -159,8 +369,8 @@ class IngredientPosition extends GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, name, {
             fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
 
         this.add([bg, text]);
@@ -184,8 +394,8 @@ class Tap extends GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, name, {
             fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('tap');
         zone.setData('tool', null);
@@ -198,13 +408,13 @@ class IngredientShelf extends GameObjects.Container {
         super(scene, x, y);
         scene.add.existing(this);
 
-        const rice_cake = new IngredientPosition(scene, - 7 * width / 16, 0, width / 8, height / 2, "떡");
-        const sauce = new IngredientPosition(scene, - 5 * width / 16, 0, width / 8, height / 2, "특제소스");
-        const fish_cake = new IngredientPosition(scene, - 3 * width / 16, 0, width / 8, height / 2, "어묵");
-        const spring_onion = new IngredientPosition(scene, - 1 * width / 16, 0, width / 8, height / 2, "파");
-        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height / 2, "수돗물");
-        const cider_tap = new Tap(scene, 5 * width / 16, 0, width / 8, height / 2, "사이다");
-        const cola_tap = new Tap(scene, 7 * width / 16, 0, width / 8, height / 2, "콜라");
+        const rice_cake = new IngredientPosition(scene, - 7 * width / 16, 0, width / 8, height / 2, IngredientName.RICE_CAKE);
+        const sauce = new IngredientPosition(scene, - 5 * width / 16, 0, width / 8, height / 2, IngredientName.SAUSE);
+        const fish_cake = new IngredientPosition(scene, - 3 * width / 16, 0, width / 8, height / 2, IngredientName.FISH_CAKE);
+        const spring_onion = new IngredientPosition(scene, - 1 * width / 16, 0, width / 8, height / 2, IngredientName.SPRING_ONION);
+        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height / 2, IngredientName.WATER);
+        const cider_tap = new Tap(scene, 5 * width / 16, 0, width / 8, height / 2, IngredientName.CIDER);
+        const cola_tap = new Tap(scene, 7 * width / 16, 0, width / 8, height / 2, IngredientName.COLA);
 
         this.add([rice_cake, sauce, fish_cake, spring_onion, water_tap, cider_tap, cola_tap]);
 
@@ -220,10 +430,10 @@ class Burner extends GameObjects.Container {
         scene.add.existing(this);
         
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
-        const text = scene.add.text(0, 0, '버너', {
+        const text = scene.add.text(0, 0, '화구', {
             fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('burner');
         zone.setData('tool', null);
@@ -239,8 +449,8 @@ class Trash extends GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, '쓰레기통', {
             fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('trash');
 
@@ -253,8 +463,12 @@ class Tool extends GameObjects.Container {
     returnX: number;
     returnY: number;
     lastZone: GameObjects.Zone | null = null;
+
+    tool_text: GameObjects.Text;
     box: Set<string> = new Set<string>();
     box_text: GameObjects.Text;
+    temperature: number;
+    temperatureEvent: Phaser.Time.TimerEvent;
 
     constructor(scene: Scene, x: number, y:number, width: number, height: number, name: string) {
         super(scene, x, y);
@@ -264,73 +478,84 @@ class Tool extends GameObjects.Container {
         this.returnX = x;
         this.returnY = y;
         this.name = name;
+        this.temperature = 0;
+        this.temperatureEvent = scene.time.addEvent({
+            delay: 1000,
+            callback: () => this.increaseTemperature(),
+            loop: true,
+            paused: true,
+        });
 
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
-        const text = scene.add.text(0, -height / 4, name, {
+        this.tool_text = scene.add.text(0, -height / 4, name, {
             fontSize: height / 2,
-            color: "#ff0000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
         this.box_text = scene.add.text(0, height / 4, '', {
             fontSize: height / 4,
-            color: "#ff0000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
             wordWrap: { width: width * 0.9 },
         }).setOrigin(0.5).setPadding(10);
 
-        this.add([bg, text, this.box_text]);
+        this.add([bg, this.tool_text, this.box_text]);
 
         this.setSize(width, height).setInteractive({ draggable: true });
         this.on('dragstart', (pointer: Input.Pointer) => {
             scene.children.bringToTop(this);
+            this.temperatureEvent.paused = true;
         });
         this.on('drag', (pointer: Input.Pointer, dragX: number, dragY: number) => {
             this.setPosition(dragX, dragY);
         });
         this.on('dragend', (pointer: Input.Pointer, dragX: number, dragY: number, dropped: boolean) => {
             if (!dropped) {
-                this.setPosition(this.returnX, this.returnY);
+                this.move(this.returnX, this.returnY);
             }
         });
         this.on('drop', (pointer: Input.Pointer, dropZone: GameObjects.Zone) => {
             switch(dropZone.name) {
                 case 'burner':
-                    if (this.name === '컵') {
-                        this.setPosition(this.returnX, this.returnY);
+                    if (this.name === ToolName.CUP) {
+                        this.move(this.returnX, this.returnY);
                     } else if (dropZone.getData('tool')) {
-                        this.setPosition(this.returnX, this.returnY);
+                        this.move(this.returnX, this.returnY);
                     } else {
                         this.lastZone?.setData('tool', null);
                         dropZone.setData('tool', this);
                         this.lastZone = dropZone;
                         this.returnX = dropZone.parentContainer.parentContainer.x + dropZone.parentContainer.x + dropZone.x;
                         this.returnY = dropZone.parentContainer.parentContainer.y + dropZone.parentContainer.y + dropZone.y;
-                        this.setPosition(this.returnX, this.returnY);
+                        this.move(this.returnX, this.returnY);
                     }
                     break;
                 case 'tap':
                     if (dropZone.getData('tool')) {
-                        this.setPosition(this.returnX, this.returnY);
+                        this.move(this.returnX, this.returnY);
                     } else {
                         this.lastZone?.setData('tool', null);
                         dropZone.setData('tool', this);
                         this.lastZone = dropZone;
                         this.returnX = dropZone.parentContainer.parentContainer.x + dropZone.parentContainer.x + dropZone.x;
                         this.returnY = dropZone.parentContainer.parentContainer.y + dropZone.parentContainer.y + dropZone.y;
-                        this.setPosition(this.returnX, this.returnY);
+                        this.move(this.returnX, this.returnY);
                         this.putIngredient(dropZone.parentContainer.name);
                     }
                     break;
                 case 'trash':
-                    this.initTool();
+                    this.returnTool();
                     break;
                 case 'order':
-                    this.lastZone?.setData('tool', null);
-                    this.lastZone = dropZone;
-                    this.returnX = dropZone.parentContainer.x + dropZone.x;
-                    this.returnY = dropZone.parentContainer.y + dropZone.y;
-                    this.setPosition(this.returnX, this.returnY);
-                    this.setInteractive({ draggable: false });
+                    if (this.name === ToolName.CUP && this.box.size == 0) {
+                        this.move(this.returnX, this.returnY);
+                    } else if ((this.name === ToolName.POT || this.name === ToolName.STEAMER) && this.temperature == 0){
+                        this.move(this.returnX, this.returnY);
+                    } else {
+                        this.lastZone?.setData('tool', null);
+                        this.lastZone = dropZone;
+                        dropZone.getData('order').submit(this);
+                    }
                     break;
                 default:
                     break;
@@ -341,18 +566,44 @@ class Tool extends GameObjects.Container {
     putIngredient(ingredient: string) {
         this.box.add(ingredient);
         this.box_text.setText(Array.from(this.box).join(' '));
+        this.move(this.returnX, this.returnY);
     }
-    clearIngredient() {
-        this.box.clear();
-        this.box_text.setText('');
-    }
-    initTool() {
+    returnTool() {
         this.lastZone?.setData('tool', null);
         this.lastZone = null;
         this.returnX = this.toolX;
         this.returnY = this.toolY;
-        this.setPosition(this.returnX, this.returnY);
-        this.clearIngredient();
+        this.move(this.returnX, this.returnY);
+        this.tool_text.setColor('#000000');
+        this.box.clear();
+        this.box_text.setText('');
+        this.temperature = 0;
+        this.setInteractive();
+    }
+    move(x: number, y: number) {
+        // set lastZone before move
+        this.setPosition(x, y);
+        if (this.lastZone?.name === 'burner' && this.box.size > 0) {
+            this.temperatureEvent.paused = false;
+            this.updateColor();
+        } else {
+            this.temperatureEvent.paused = true;
+        }
+    }
+    increaseTemperature() {
+        this.temperature = Math.min(this.temperature + 1, 200);
+        this.updateColor();
+    }
+    updateColor() {
+        if (this.temperature > 10) {
+            this.tool_text.setColor('#000000');
+        } else if (this.temperature > 8) {
+            this.tool_text.setColor('#00cc00');
+        } else if (this.temperature > 5) {
+            this.tool_text.setColor('#00aaff');
+        } else {
+            this.tool_text.setColor('#cc0000');
+        }
     }
 }
 class ToolShelf extends GameObjects.Container {
@@ -372,8 +623,8 @@ class ToolShelf extends GameObjects.Container {
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, name, {
             fontSize: height / 2,
-            color: "#000000",
-            fontFamily: "StudyHard",
+            color: '#000000',
+            fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
 
         this.add([bg, text]);
@@ -401,9 +652,9 @@ class Cooking extends GameObjects.Container {
         const burner_2 = new Burner(scene, - 3 * width / 16, 0, width / 8, height / 2);
         const burner_3 = new Burner(scene, - 1 * width / 16, 0, width / 8, height / 2);
 
-        const pot = new ToolShelf(scene, 1 * width / 16, 0, width / 8, height / 2, "냄비");
-        const steamer = new ToolShelf(scene, 3 * width / 16, 0, width / 8, height / 2, "찜기");
-        const cup = new ToolShelf(scene, 5 * width / 16, 0, width / 8, height / 2, "컵");
+        const pot = new ToolShelf(scene, 1 * width / 16, 0, width / 8, height / 2, ToolName.POT);
+        const steamer = new ToolShelf(scene, 3 * width / 16, 0, width / 8, height / 2, ToolName.STEAMER);
+        const cup = new ToolShelf(scene, 5 * width / 16, 0, width / 8, height / 2, ToolName.CUP);
 
         const trash = new Trash(scene, 7 * width / 16, 0, width / 8, height / 2);
 
@@ -416,24 +667,31 @@ class Cooking extends GameObjects.Container {
 }
 
 export class MainGame extends Scene {
-    constructor() {
-        super("MainGame");
-    }
+    order_0: Order | undefined;
+    order_1: Order | undefined;
+    order_2: Order | undefined;
+    order_3: Order | undefined;
 
-    preload() {
-        Order.preload(this);
+    constructor() {
+        super('MainGame');
     }
 
     create() {
+        const remain_time = 60;
+
         // 탑바
         // this.add.rectangle(WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xff00ff, 1).setStrokeStyle(5, 0x000000);
-        new TopBar(this, WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10);
+        const top_bar = new TopBar(this, WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, remain_time);
         // 주문서
         // this.add.rectangle(WIDTH / 2, 5 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0x00ffff, 1).setStrokeStyle(5, 0x000000);
-        new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
-        new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
-        new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
-        new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10);
+        this.order_0 = new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+            (price) => top_bar.addEarn(price));
+        this.order_1 = new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+            (price) => top_bar.addEarn(price));
+        this.order_2 = new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+            (price) => top_bar.addEarn(price));
+        this.order_3 = new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+            (price) => top_bar.addEarn(price));
         // 책상
         // this.add.rectangle(WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Table(this, WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10);
@@ -443,10 +701,19 @@ export class MainGame extends Scene {
         // 조리
         // this.add.rectangle(WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Cooking(this, WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10);
+
+        this.order_0.newOrder();
+        this.order_1.newOrder();
+        this.order_2.newOrder();
+        this.order_3.newOrder();
+
+        const game_start = () => {
+            console.debug('Game Start!');
+            top_bar.startTimer();
+            this.input.off('pointerdown', game_start);
+        }
+        this.input.on('pointerdown', game_start);
     }
 
-    // 주문서 추가
-    // 요리 제작
-    // 완성된 요리 선반에 올리기
-    // 주문서 선반에 올리기
+    // 주문서 추가 로직
 }

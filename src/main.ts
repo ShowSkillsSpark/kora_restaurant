@@ -4,7 +4,6 @@ import { Preloader } from "./scenes/Preloader";
 import { MainMenu } from "./scenes/MainMenu";
 import { MainGame } from "./scenes/MainGame";
 import { GameOver } from "./scenes/GameOver";
-import { GameClear } from "./scenes/GameClear";
 import { Boot } from "./scenes/Boot";
 import { Recipe } from "./scenes/Recipe";
 import { Credits } from "./scenes/Credits";
@@ -30,14 +29,13 @@ const config: Types.Core.GameConfig = {
     //     }
     // },
     scene: [
-        // Boot,
+        Boot,
         Preloader,
         MainMenu,
-        // Recipe,
-        // Credits,
+        Recipe,
+        Credits,
         MainGame,
         GameOver,
-        GameClear,
     ]
 };
 

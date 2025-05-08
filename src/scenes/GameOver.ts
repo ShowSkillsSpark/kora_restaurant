@@ -5,5 +5,7 @@ export class GameOver extends Scene {
         super("GameOver");
     }
 
-    create() {}
+    create() {
+        this.scene.start('MainMenu');
+    }
 }

@@ -60,9 +60,6 @@ export class MainMenu extends Scene {
         super("MainMenu");
     }
 
-    preload() {
-    }
-
     create() {
         // 타이틀
         new Title(this, WIDTH / 2, HEIGHT / 3);
@@ -78,15 +75,15 @@ export class MainMenu extends Scene {
 
         // 레시피
         new Button(this, WIDTH / 2, button_offset + 1 * button_height + 2 * button_gap, button_width, button_height, "레시피").setInteractive().on('pointerup', () => {
-            this.scene.start("Recipe");
+            // this.scene.start("Recipe");
         });
 
         // 크레딧
         new Button(this, WIDTH / 2, button_offset + 2 * button_height + 3 * button_gap, button_width, button_height, "크레딧").setInteractive().on('pointerup', () => {
-            this.scene.start("Credits");
+            // this.scene.start("Credits");
         });
 
         // debug
-        this.scene.start("MainGame");
+        // this.scene.start("MainGame");
     }
 }
