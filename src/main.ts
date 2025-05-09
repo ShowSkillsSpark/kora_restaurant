@@ -39,6 +39,12 @@ const config: Types.Core.GameConfig = {
     ]
 };
 
+let game: Game;
 document.addEventListener("DOMContentLoaded", () => {
-    new Game(config);
+    game = new Game(config);
+    // game.scale.on('orientationchange', () => {
+    //     game.scale.scaleMode = Scale.FIT
+    // });
 });
+// window.addEventListener('deviceorientation', () => {
+// });

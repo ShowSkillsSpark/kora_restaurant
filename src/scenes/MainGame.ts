@@ -127,6 +127,18 @@ class Food {
     static kora_tteokbokki = new Food(FoodName.KORA_TTEOKBOKKI, 4000, 500, ToolName.POT,
         [IngredientName.WATER, IngredientName.RICE_CAKE, IngredientName.SAUSE], [IngredientName.FISH_CAKE, IngredientName.SPRING_ONION],
         [[0, -8], [5, 1], [8, 2], [10, -8]]);
+
+    static jako_ramen = new Food(FoodName.JAKO_RAMEN, 4000, 500, ToolName.POT,
+        [IngredientName.WATER, IngredientName.NOODLE, IngredientName.RAMEN_SOUP], [IngredientName.EGG, IngredientName.SESAME],
+        [[0, -8], [5, 1], [8, 2], [10, -8]]);
+
+    static nande_sundae = new Food(FoodName.NANDE_SUNDAE, 3000, 500, ToolName.STEAMER,
+        [IngredientName.WATER, IngredientName.SUNDAE], [],
+        [[0, -6], [5, 1], [8, 2], [10, -6]]);
+
+    static daedu_dumpling = new Food(FoodName.DAEDU_DUMPLING, 3000, 500, ToolName.STEAMER,
+        [IngredientName.WATER, IngredientName.DUMPLING], [],
+        [[0, -6], [5, 1], [8, 2], [10, -6]]);
 }
 class Drink extends Food {
     static tap_water = new Food(DrinkName.TAP_WATER, 1000, 100, ToolName.CUP,
@@ -210,7 +222,7 @@ export class Order extends GameObjects.Container {
         const len = this.tool_list.length;
         this.tool_list.forEach((tool: Tool, index: number) => {
             const x = this.x - this.width / 2 + (index + 1) * this.width / (len + 1);
-            const y = this.y + this.height / 2;
+            const y = this.y + 3 * this.height / 8;
             tool.move(x, y);
         });
 
@@ -247,7 +259,7 @@ export class Order extends GameObjects.Container {
             // const food_list = [null];
             // const drink_list = [Drink.tap_water];
             // 일반 버전
-            const food_list = [Food.kora_tteokbokki, null];
+            const food_list = [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null];
             const drink_list = [Drink.tap_water, Drink.uru_cider, Drink.kora_cola, null];
             const food = food_list[Math.floor(Math.random() * food_list.length)];
             const drink = drink_list[Math.floor(Math.random() * drink_list.length)];
@@ -408,17 +420,32 @@ class IngredientShelf extends GameObjects.Container {
         super(scene, x, y);
         scene.add.existing(this);
 
-        const rice_cake = new IngredientPosition(scene, - 7 * width / 16, 0, width / 8, height / 2, IngredientName.RICE_CAKE);
-        const sauce = new IngredientPosition(scene, - 5 * width / 16, 0, width / 8, height / 2, IngredientName.SAUSE);
-        const fish_cake = new IngredientPosition(scene, - 3 * width / 16, 0, width / 8, height / 2, IngredientName.FISH_CAKE);
-        const spring_onion = new IngredientPosition(scene, - 1 * width / 16, 0, width / 8, height / 2, IngredientName.SPRING_ONION);
-        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height / 2, IngredientName.WATER);
-        const cider_tap = new Tap(scene, 5 * width / 16, 0, width / 8, height / 2, IngredientName.CIDER);
-        const cola_tap = new Tap(scene, 7 * width / 16, 0, width / 8, height / 2, IngredientName.COLA);
+        const rice_cake = new IngredientPosition(scene, - 7 * width / 16, - height / 4, width / 8, height / 2, IngredientName.RICE_CAKE);
+        const sauce = new IngredientPosition(scene, - 5 * width / 16,  - height / 4, width / 8, height / 2, IngredientName.SAUSE);
+        const fish_cake = new IngredientPosition(scene, - 3 * width / 16,  - height / 4, width / 8, height / 2, IngredientName.FISH_CAKE);
+        const spring_onion = new IngredientPosition(scene, - 1 * width / 16,  - height / 4, width / 8, height / 2, IngredientName.SPRING_ONION);
+        const sundae = new IngredientPosition(scene, 1 * width / 16,  - height / 4, width / 8, height / 2, IngredientName.SUNDAE);
 
-        this.add([rice_cake, sauce, fish_cake, spring_onion, water_tap, cider_tap, cola_tap]);
+        const noodle = new IngredientPosition(scene, - 7 * width / 16, height / 4, width / 8, height / 2, IngredientName.NOODLE);
+        const ramen_sauce = new IngredientPosition(scene, - 5 * width / 16, height / 4, width / 8, height / 2, IngredientName.RAMEN_SOUP);
+        const egg = new IngredientPosition(scene, - 3 * width / 16, height / 4, width / 8, height / 2, IngredientName.EGG);
+        const sesame = new IngredientPosition(scene, - 1 * width / 16, height / 4, width / 8, height / 2, IngredientName.SESAME);
+        const dumpling = new IngredientPosition(scene, 1 * width / 16, height / 4, width / 8, height / 2, IngredientName.DUMPLING);
 
-        [rice_cake, sauce, fish_cake, spring_onion].forEach((position: IngredientPosition) => {
+        const water_tap = new Tap(scene, 3 * width / 16, 0, width / 8, height, IngredientName.WATER);
+        const cider_tap = new Tap(scene, 5 * width / 16, 0, width / 8, height, IngredientName.CIDER);
+        const cola_tap = new Tap(scene, 7 * width / 16, 0, width / 8, height, IngredientName.COLA);
+
+        this.add([
+            rice_cake, sauce, fish_cake, spring_onion, sundae,
+            noodle, ramen_sauce, egg, sesame, dumpling,
+            water_tap, cider_tap, cola_tap
+        ]);
+
+        [
+            rice_cake, sauce, fish_cake, spring_onion, sundae,
+            noodle, ramen_sauce, egg, sesame, dumpling,
+        ].forEach((position: IngredientPosition) => {
             position.createIngredients();
         });
     }
@@ -448,7 +475,7 @@ class Trash extends GameObjects.Container {
         
         const bg = scene.add.rectangle(0, 0, width, height, 0xffffff).setOrigin(0.5).setStrokeStyle(5, 0x000000);
         const text = scene.add.text(0, 0, '쓰레기통', {
-            fontSize: height / 2,
+            fontSize: height / 3,
             color: '#000000',
             fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
@@ -493,7 +520,7 @@ class Tool extends GameObjects.Container {
             fontFamily: 'StudyHard',
         }).setOrigin(0.5).setPadding(10);
         this.box_text = scene.add.text(0, height / 4, '', {
-            fontSize: height / 4,
+            fontSize: height / 5,
             color: '#000000',
             fontFamily: 'StudyHard',
             wordWrap: { width: width * 0.9 },
@@ -633,8 +660,8 @@ class ToolShelf extends GameObjects.Container {
     createTools() {
         const x = this.parentContainer.x + this.x;
         const y = this.parentContainer.y + this.y;
-        const width = this.width * 0.8;
-        const height = this.height * 0.8;
+        const width = this.width * 0.6;
+        const height = this.height * 0.6;
         new Tool(this.scene, x, y, width, height, this.name);
         new Tool(this.scene, x, y, width, height, this.name);
         new Tool(this.scene, x, y, width, height, this.name);
@@ -647,16 +674,16 @@ class Cooking extends GameObjects.Container {
         super(scene, x, y);
         scene.add.existing(this);
 
-        const burner_0 = new Burner(scene, - 7 * width / 16, 0, width / 8, height / 2);
-        const burner_1 = new Burner(scene, - 5 * width / 16, 0, width / 8, height / 2);
-        const burner_2 = new Burner(scene, - 3 * width / 16, 0, width / 8, height / 2);
-        const burner_3 = new Burner(scene, - 1 * width / 16, 0, width / 8, height / 2);
+        const burner_0 = new Burner(scene, - 7 * width / 16, 0, width / 8, height * 0.7);
+        const burner_1 = new Burner(scene, - 5 * width / 16, 0, width / 8, height * 0.7);
+        const burner_2 = new Burner(scene, - 3 * width / 16, 0, width / 8, height * 0.7);
+        const burner_3 = new Burner(scene, - 1 * width / 16, 0, width / 8, height * 0.7);
 
-        const pot = new ToolShelf(scene, 1 * width / 16, 0, width / 8, height / 2, ToolName.POT);
-        const steamer = new ToolShelf(scene, 3 * width / 16, 0, width / 8, height / 2, ToolName.STEAMER);
-        const cup = new ToolShelf(scene, 5 * width / 16, 0, width / 8, height / 2, ToolName.CUP);
+        const pot = new ToolShelf(scene, 1 * width / 16, 0, width / 8, height * 0.7, ToolName.POT);
+        const steamer = new ToolShelf(scene, 3 * width / 16, 0, width / 8, height * 0.7, ToolName.STEAMER);
+        const cup = new ToolShelf(scene, 5 * width / 16, 0, width / 8, height * 0.7, ToolName.CUP);
 
-        const trash = new Trash(scene, 7 * width / 16, 0, width / 8, height / 2);
+        const trash = new Trash(scene, 7 * width / 16, 0, width / 8, height * 0.7);
 
         this.add([burner_0, burner_1, burner_2, burner_3, pot, steamer, cup, trash]);
 
@@ -696,10 +723,10 @@ export class MainGame extends Scene {
         // this.add.rectangle(WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Table(this, WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10);
         // 재료
-        // this.add.rectangle(WIDTH / 2, 12 * HEIGHT / 20, WIDTH, 2 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
+        this.add.rectangle(WIDTH / 2, 12 * HEIGHT / 20, WIDTH, 2 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new IngredientShelf(this, WIDTH / 2, 12 * HEIGHT / 20, WIDTH, 2 * HEIGHT / 10);
         // 조리
-        // this.add.rectangle(WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
+        this.add.rectangle(WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
         new Cooking(this, WIDTH / 2, 17 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10);
 
         this.order_0.newOrder();

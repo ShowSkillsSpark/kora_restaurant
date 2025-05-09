@@ -12,6 +12,12 @@ export enum IngredientName {
     SAUSE = '특제소스',
     FISH_CAKE = '어묵',
     SPRING_ONION = '파',
+    NOODLE = '면',
+    RAMEN_SOUP = '라면스프',
+    EGG = '계란',
+    SESAME = '참깨',
+    SUNDAE = '순대',
+    DUMPLING = '만두',
     WATER = '물',
     CIDER = '사이다',
     COLA = '콜라',
@@ -19,6 +25,9 @@ export enum IngredientName {
 
 export enum FoodName {
     KORA_TTEOKBOKKI = '코라떡볶이',
+    JAKO_RAMEN = '쟈코라면',
+    NANDE_SUNDAE = '난데순대',
+    DAEDU_DUMPLING = '대두왕만두',
 }
 
 export enum DrinkName {

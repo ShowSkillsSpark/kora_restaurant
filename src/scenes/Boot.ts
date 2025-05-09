@@ -1,4 +1,4 @@
-import { Scene } from "phaser";
+import { Scale, Scene } from "phaser";
 
 export class Boot extends Scene {
     constructor() {

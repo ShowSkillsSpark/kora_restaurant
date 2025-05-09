@@ -69,17 +69,17 @@ export class MainMenu extends Scene {
         const button_gap = HEIGHT / 20;
         const button_width = WIDTH / 3;
         // 영업 시작
-        new Button(this, WIDTH / 2, button_offset + 0 * button_height + 1 * button_gap, button_width, button_height, "영업 시작").setInteractive().on('pointerup', () => {
+        new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, "영업 시작").setInteractive().on('pointerup', () => {
             this.scene.start("MainGame");
         });
 
         // 레시피
-        new Button(this, WIDTH / 2, button_offset + 1 * button_height + 2 * button_gap, button_width, button_height, "레시피").setInteractive().on('pointerup', () => {
-            // this.scene.start("Recipe");
+        new Button(this, WIDTH / 2, button_offset + 2 * (button_height + button_gap) - button_height, button_width, button_height, "레시피").setInteractive().on('pointerup', () => {
+            this.scene.start("Recipe");
         });
 
         // 크레딧
-        new Button(this, WIDTH / 2, button_offset + 2 * button_height + 3 * button_gap, button_width, button_height, "크레딧").setInteractive().on('pointerup', () => {
+        new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, "크레딧").setInteractive().on('pointerup', () => {
             // this.scene.start("Credits");
         });
 
