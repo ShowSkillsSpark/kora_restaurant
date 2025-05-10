@@ -1,9 +1,42 @@
 import { Scene } from "phaser";
+import { HEIGHT, WIDTH } from "../constants";
 
 export class Credits extends Scene {
     constructor() {
         super("Credits");
     }
 
-    create() {}
+    create() {
+        this.add.text(0, 0, '기획/개발: 실력발휘', {
+            fontSize: HEIGHT / 16,
+            color: '#000000',
+            fontFamily: 'StudyHard',
+        });
+        
+        // 돌아가기
+        const back_text = this.add.text(WIDTH / 2, 3 * HEIGHT/4, '돌아가기', {
+            fontSize: HEIGHT / 8,
+            color: '#ff0000',
+            fontFamily: 'StudyHard',
+        }).setOrigin(0.5);
+
+        back_text.setInteractive();
+        back_text.on('pointerup', () => {
+            this.scene.start('MainMenu');
+        });
+        back_text.on('pointerover', () => {
+            this.scene.scene.tweens.add({
+                targets: back_text,
+                scale: 1.1,
+                duration: 100,
+            });
+        });
+        back_text.on('pointerout', () => {
+            this.scene.scene.tweens.add({
+                targets: back_text,
+                scale: 1,
+                duration: 100,
+            });
+        });
+    }
 }

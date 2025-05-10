@@ -7,7 +7,6 @@ class Button extends GameObjects.Container {
         scene.add.existing(this);
 
         this.setSize(width, height);
-
         
         const bg = scene.add.graphics().fillStyle(0x575876, 0.5).fillRoundedRect(-width/2, -height/2, width, height, height * 0.3).setDepth(0);
         this.add([
@@ -60,9 +59,14 @@ export class MainMenu extends Scene {
         super("MainMenu");
     }
 
+    preload() {
+        this.load.setPath('assets');
+        this.load.audio('welcome1', 'audio/welcome1.wav');
+    }
+
     create() {
         // 타이틀
-        new Title(this, WIDTH / 2, HEIGHT / 3);
+        new Title(this, WIDTH / 2, 3 * HEIGHT / 10);
 
         const button_offset = 9 * HEIGHT / 20;
         const button_height = HEIGHT / 10;
@@ -70,6 +74,7 @@ export class MainMenu extends Scene {
         const button_width = WIDTH / 3;
         // 영업 시작
         new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, "영업 시작").setInteractive().on('pointerup', () => {
+            this.sound.play('welcome1');
             this.scene.start("MainGame");
         });
 
@@ -79,9 +84,10 @@ export class MainMenu extends Scene {
         });
 
         // 크레딧
-        new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, "크레딧").setInteractive().on('pointerup', () => {
-            // this.scene.start("Credits");
+        const credit_button = new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, "크레딧").on('pointerup', () => {
+            this.scene.start("Credits");
         });
+        // credit_button.setInteractive();
 
         // debug
         // this.scene.start("MainGame");

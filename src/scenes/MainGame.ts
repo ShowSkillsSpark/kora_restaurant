@@ -209,7 +209,10 @@ export class Order extends GameObjects.Container {
         });
         this.respawn_timer = scene.time.addEvent({
             delay: 1000,
-            callback: () => { this.newOrder(); },
+            callback: () => {
+                // play welcome
+                this.newOrder();
+            },
             loop: false,
             paused: true,
         });
@@ -632,6 +635,12 @@ class Tool extends GameObjects.Container {
             this.tool_text.setColor('#cc0000');
         }
     }
+
+    static preload(scene: Scene) {
+        scene.load.setPath('assets');
+        scene.load.image('glass', 'amount_water_glass1.png');
+        scene.load.image('glass_fill', 'amount_water_glass3.png');
+    }
 }
 class ToolShelf extends GameObjects.Container {
     scene: Scene;
@@ -660,8 +669,8 @@ class ToolShelf extends GameObjects.Container {
     createTools() {
         const x = this.parentContainer.x + this.x;
         const y = this.parentContainer.y + this.y;
-        const width = this.width * 0.6;
-        const height = this.height * 0.6;
+        const width = this.width * 0.75;
+        const height = this.height * 0.75;
         new Tool(this.scene, x, y, width, height, this.name);
         new Tool(this.scene, x, y, width, height, this.name);
         new Tool(this.scene, x, y, width, height, this.name);
@@ -739,7 +748,7 @@ export class MainGame extends Scene {
             top_bar.startTimer();
             this.input.off('pointerdown', game_start);
         }
-        this.input.on('pointerdown', game_start);
+        this.input.on('pointerup', game_start);
     }
 
     // 주문서 추가 로직

@@ -20,7 +20,7 @@ export class Recipe extends Scene {
         }).setOrigin(0.5);
 
         back_text.setInteractive();
-        back_text.on('pointerdown', () => {
+        back_text.on('pointerup', () => {
             this.scene.start('MainMenu');
         });
         back_text.on('pointerover', () => {
