@@ -83,11 +83,13 @@ export class MainMenu extends Scene {
 
         // 레시피
         new Button(this, WIDTH / 2, button_offset + 2 * (button_height + button_gap) - button_height, button_width, button_height, '레시피').setInteractive().on('pointerup', () => {
+            this.sound.play('tap1', {volume: 0.4});
             this.scene.start('Recipe');
         });
 
         // 크레딧
         const credit_button = new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, '크레딧').on('pointerup', () => {
+            this.sound.play('tap1', {volume: 0.4});
             this.scene.start('Credits');
         });
         credit_button.setInteractive();

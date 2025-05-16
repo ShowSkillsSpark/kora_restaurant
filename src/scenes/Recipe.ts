@@ -21,6 +21,7 @@ export class Recipe extends Scene {
 
         back_text.setInteractive();
         back_text.on('pointerup', () => {
+            this.sound.play('tap1', {volume: 0.4});
             this.scene.start('MainMenu');
         });
         back_text.on('pointerover', () => {
