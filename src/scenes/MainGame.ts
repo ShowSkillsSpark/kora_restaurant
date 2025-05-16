@@ -179,6 +179,8 @@ export class Order extends GameObjects.Container {
 
     respawn_timer: Phaser.Time.TimerEvent;
 
+    tap_water_only_flag: boolean = false;
+
     constructor(scene: Scene, x: number, y:number, width: number, height: number, callback_submit: (price: number) => void) {
         super(scene, x, y);
         scene.add.existing(this);
@@ -205,6 +207,7 @@ export class Order extends GameObjects.Container {
         this.face = scene.add.image(0, 7 * height / 20, this.gender + this.step).setOrigin(0.5);
         this.face.setScale(height / this.face.height * 0.7);
         this.initFace();
+        this.updateFace();
 
         const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('order');
         zone.setData('order', this);
@@ -266,7 +269,14 @@ export class Order extends GameObjects.Container {
             this.requirement_list.splice(best_fit_index, 1);
             this.updateText();
             this.cost += best_price;
+            this.step = Math.min(this.step + 1, 9);
+        } else { // 괴식
+            if (this.tap_water_only_flag) { // 수돗물단
+                this.step = Math.min(this.step + 1, 8);
+                this.cost = 1000;
+            } else this.step = Math.max(this.step - 1, 0);
         }
+        this.updateFace();
         if (this.requirement_list.length == 0) {
             this.cost_text.setText('+' + this.cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈');
             this.progress_timer.paused = false;
@@ -287,7 +297,6 @@ export class Order extends GameObjects.Container {
         const gender = ['man', 'woman'];
         this.gender = gender[Math.floor(Math.random() * gender.length)];
         this.step = 6;
-        this.face.setTexture(this.gender + this.step);
     }
     updateFace() {
         this.face.setTexture(this.gender + this.step);
@@ -310,6 +319,7 @@ export class Order extends GameObjects.Container {
     }
     newOrder() {
         this.initFace();
+        this.updateFace();
         this.requirement_list = this.randomRequirementList();
         this.updateText();
 
@@ -330,6 +340,8 @@ export class Order extends GameObjects.Container {
             paused: true,
         });
         this.hide = false;
+
+        this.tap_water_only_flag = (this.requirement_list.length == 1 && this.requirement_list[0] === Food.tap_water);
     }
     set hide(flag: boolean) {
         this.text_bg.visible = !flag;
@@ -345,9 +357,9 @@ export class Order extends GameObjects.Container {
 
         scene.load.image('man0', 'face_angry_man5.png');
         scene.load.image('man1', 'face_angry_man4.png');
-        scene.load.image('man4', 'face_angry_man1.png');
         scene.load.image('man2', 'face_angry_man3.png');
         scene.load.image('man3', 'face_angry_man2.png');
+        scene.load.image('man4', 'face_angry_man1.png');
         scene.load.image('man5', 'face_smile_man1.png');
         scene.load.image('man6', 'face_smile_man2.png');
         scene.load.image('man7', 'face_smile_man3.png');
