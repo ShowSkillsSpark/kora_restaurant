@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
-import { Order } from "./MainGame";
+import { MainGame } from "./MainGame";
+import { MainMenu } from "./MainMenu";
 
 export class Preloader extends Scene {
     constructor() {
@@ -18,7 +19,8 @@ export class Preloader extends Scene {
         // 뒤에 모든 씬에 필요한 파일 전부 불러오기
         this.load.font('Jalnan', 'https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff');
         this.load.font('StudyHard', 'https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/Ownglyph_StudyHard-Rg.woff2');
-        Order.preload(this);
+        MainMenu.preload(this);
+        MainGame.preload(this);
     }
     create() {
         this.scene.start('MainMenu');

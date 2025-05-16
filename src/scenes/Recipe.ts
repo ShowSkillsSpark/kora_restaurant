@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { HEIGHT, WIDTH } from "../constants";
+import { FoodName, HEIGHT, IngredientName, ToolName, WIDTH } from "../constants";
 
 export class Recipe extends Scene {
     constructor() {
@@ -7,8 +7,8 @@ export class Recipe extends Scene {
     }
 
     create() {
-        this.add.text(0, 0, `코라떡볶이: 냄비 + 물 + 떡 + 특제소스 [+ 어묵] [+ 파]\n쟈코라면: 냄비 + 물 + 면 + 라면스프 [+ 계란] [+ 참깨]\n난데순대: 찜기 + 물 + 순대\n대두왕만두: 찜기 + 물 + 만두\n수돗물: 컵 + 물\n우루사이다: 컵 + 사이다\n코라콜라: 컵 + 콜라\n`, {
-            fontSize: HEIGHT / 16,
+        this.add.text(0, 0, `${FoodName.KORA_TTEOKBOKKI}: ${ToolName.POT} + ${IngredientName.WATER} + ${IngredientName.RICE_CAKE} + ${IngredientName.SAUCE} [+ 갖은 양념]\n${FoodName.JAKO_RAMEN}: ${ToolName.POT} + ${IngredientName.WATER} + ${IngredientName.NOODLE} + ${IngredientName.RAMEN_SOUP} [+ 갖은 양념]\n\n${FoodName.NANDE_SUNDAE}: ${ToolName.STEAMER} + ${IngredientName.WATER} + ${IngredientName.SUNDAE}\n${FoodName.DAEDU_DUMPLING}: ${ToolName.STEAMER} + ${IngredientName.WATER} + ${IngredientName.DUMPLING}\n\n${FoodName.TAP_WATER}: ${ToolName.CUP} + ${IngredientName.WATER}\n${FoodName.URU_CIDER}: ${ToolName.CUP} + ${IngredientName.CIDER}\n${FoodName.KORA_COLA}: ${ToolName.CUP} + ${IngredientName.COLA}`, {
+            fontSize: HEIGHT / 24,
             color: '#000000',
             fontFamily: 'StudyHard',
         });

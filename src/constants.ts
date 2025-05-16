@@ -9,7 +9,7 @@ export enum ToolName {
 
 export enum IngredientName {
     RICE_CAKE = '떡',
-    SAUSE = '특제소스',
+    SAUCE = '떡볶이소스',
     FISH_CAKE = '어묵',
     SPRING_ONION = '파',
     NOODLE = '면',
@@ -28,9 +28,6 @@ export enum FoodName {
     JAKO_RAMEN = '쟈코라면',
     NANDE_SUNDAE = '난데순대',
     DAEDU_DUMPLING = '대두왕만두',
-}
-
-export enum DrinkName {
     TAP_WATER = '수돗물',
     URU_CIDER = '우루사이다',
     KORA_COLA = '코라콜라',
@@ -40,5 +37,6 @@ export const PROGRESS_LIST = [
     ['모구모구', '우마이!'],
     ['맛있게 먹었습니다~'],
     ['우마이!', '오츠레이!'],
-    ['음~', '오츠레이'],
+    ['음~', '오츠코라'],
+    ['음!', '약해보이는데... 의외로 맛있네?'],
 ]

@@ -7,11 +7,16 @@ export class Credits extends Scene {
     }
 
     create() {
-        this.add.text(0, 0, '기획/개발: 실력발휘', {
+        this.add.text(WIDTH / 2, HEIGHT/16, '기획/개발', {
             fontSize: HEIGHT / 16,
             color: '#000000',
             fontFamily: 'StudyHard',
-        });
+        }).setOrigin(0.5);
+        this.add.text(WIDTH / 2, 3 * HEIGHT/16, '실력발휘', {
+            fontSize: HEIGHT / 8,
+            color: '#000000',
+            fontFamily: 'StudyHard',
+        }).setOrigin(0.5);
         
         // 돌아가기
         const back_text = this.add.text(WIDTH / 2, 3 * HEIGHT/4, '돌아가기', {
