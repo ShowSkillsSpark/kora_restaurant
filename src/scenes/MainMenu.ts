@@ -58,15 +58,19 @@ export class MainMenu extends Scene {
 
     constructor() {
         super('MainMenu');
-        this.start_offset = WIDTH;
+        this.start_offset = Math.floor(Math.random() * 4);
     }
 
     create() {
         // 배경
-        this.spring = this.add.image(this.start_offset, HEIGHT/2 + 100, '봄').setOrigin(0.5).setScale(0.7);
-        this.summer = this.add.image(this.start_offset + this.spring.displayWidth, HEIGHT/2 + 100, '여름').setOrigin(0.5).setScale(0.7);
-        this.fall = this.add.image(this.start_offset + 2 * this.spring.displayWidth, HEIGHT/2 + 100, '가을').setOrigin(0.5).setScale(0.7);
-        this.winter = this.add.image(this.start_offset + -1 * this.spring.displayWidth, HEIGHT/2 + 100, '겨울').setOrigin(0.5).setScale(0.7);
+        this.spring = this.add.image(WIDTH/2, HEIGHT/2, '봄').setOrigin(0.5).setScale(0.7);
+        this.summer = this.add.image(WIDTH/2, HEIGHT/2, '여름').setOrigin(0.5).setScale(0.7);
+        this.fall = this.add.image(WIDTH/2, HEIGHT/2, '가을').setOrigin(0.5).setScale(0.7);
+        this.winter = this.add.image(WIDTH/2, HEIGHT/2, '겨울').setOrigin(0.5).setScale(0.7);
+        this.spring.x = WIDTH/2 + ((this.start_offset + 0) % 4) * this.spring.displayWidth;
+        this.summer.x = WIDTH/2 + ((this.start_offset + 1) % 4) * this.spring.displayWidth;
+        this.fall.x = WIDTH/2 + ((this.start_offset + 2) % 4) * this.spring.displayWidth;
+        this.winter.x = WIDTH/2 + ((this.start_offset + 3) % 4) * this.spring.displayWidth;
 
         // 타이틀
         new Title(this, WIDTH / 2, 3 * HEIGHT / 10);

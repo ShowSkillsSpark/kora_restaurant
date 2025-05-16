@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { MainGame } from "./MainGame";
 import { MainMenu } from "./MainMenu";
+import { HEIGHT, WIDTH } from "../constants";
 
 export class Preloader extends Scene {
     constructor() {
@@ -8,10 +9,10 @@ export class Preloader extends Scene {
     }
 
     init() {
-        this.add.rectangle(600, 450, 600, 40).setStrokeStyle(1, 0xffffff);
-        const bar = this.add.rectangle(600 - 298, 450, 4, 36, 0xffffff);
+        this.add.rectangle(WIDTH/2, HEIGHT/2, WIDTH/2, HEIGHT/32).setStrokeStyle(1, 0x575876);
+        const bar = this.add.rectangle(WIDTH/4, HEIGHT/2, 0, HEIGHT/32, 0x575876);
         this.load.on('progress', (progress: number) => {
-            bar.width = 4 + 592 * progress;
+            bar.width = WIDTH/2 * progress;
         });
     }
 

@@ -119,7 +119,7 @@ class Food {
             } else if (this.plus.has(ingredient_name)) {
                 score += 1;
             } else {
-                score -= 1;
+                score -= 3;
             }
         });
         if (base < this.necessary.size) return 0;
@@ -295,9 +295,10 @@ export class Order extends GameObjects.Container {
     }
     randomRequirementList() {
         const requirement_list = [];
-        const food_list = [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null];
-        // const food_list = [null];
+        const food_list = [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
         const drink_list = [Food.tap_water, Food.uru_cider, Food.kora_cola, null];
+        // const food_list = [Food.kora_tteokbokki];
+        // const drink_list = [null];
         const food = food_list[Math.floor(Math.random() * food_list.length)];
         const drink = food ? drink_list[Math.floor(Math.random() * drink_list.length)] : Food.tap_water;
         if (food) requirement_list.push(food);
