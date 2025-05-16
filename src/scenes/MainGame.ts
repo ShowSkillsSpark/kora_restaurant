@@ -273,7 +273,7 @@ export class Order extends GameObjects.Container {
         } else { // 괴식
             if (this.tap_water_only_flag) { // 수돗물단
                 this.step = Math.min(this.step + 1, 8);
-                this.cost = 1000;
+                this.cost = 9000;
             } else this.step = Math.max(this.step - 1, 0);
         }
         this.updateFace();
