@@ -115,7 +115,7 @@ export class MainMenu extends Scene {
             sound.stop();
         });
         const rand = Math.floor(Math.random() * 6);
-        this.sound.play('MainMenu_bgm_' + 0, {volume: 0.3, loop: true, rate: 1});
+        this.sound.play('MainMenu_bgm_' + rand, {volume: 0.3, loop: true, rate: 1});
 
         // debug
         // this.scene.start('MainGame');
