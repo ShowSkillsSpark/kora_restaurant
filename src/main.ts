@@ -36,7 +36,7 @@ const config: Types.Core.GameConfig = {
         Credits,
         MainGame,
         GameOver,
-    ]
+    ],
 };
 
 let game: Game;

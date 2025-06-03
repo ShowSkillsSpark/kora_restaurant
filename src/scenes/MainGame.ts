@@ -81,11 +81,18 @@ class TopBar extends GameObjects.Container {
         sessionStorage.setItem('earn', earn.toString());
         this.earn_text.setText(earn.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈');
         this.scene.sound.play('pay1', {volume: 0.5});
+        const rand = Math.random();
+        if (rand < 0.05) this.scene.sound.play('pay3', {volume: 0.5});
+        else if (rand < 0.2) this.scene.sound.play('pay4', {volume: 0.5});
+        else this.scene.sound.play('pay2', {volume: 0.5});
     }
 
     static preload(scene: Scene) {
         scene.load.setPath('assets/MainGame');
-        scene.load.audio('pay1', '06.계산.mp3');
+        scene.load.audio('pay1', 'audio/06.계산.mp3');
+        scene.load.audio('pay2', 'audio/thx_0.wav');
+        scene.load.audio('pay3', 'audio/voice_7.wav');
+        scene.load.audio('pay4', 'audio/voice_9.wav');
         scene.load.image('help', 'help.png');
     }
 }
@@ -307,6 +314,7 @@ export class Order extends GameObjects.Container {
         const food_list = [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
         const drink_list = [Food.tap_water, Food.uru_cider, Food.kora_cola, null];
         // const food_list = [Food.kora_tteokbokki];
+        // const food_list = [null];
         // const drink_list = [null];
         const food = food_list[Math.floor(Math.random() * food_list.length)];
         const drink = food ? drink_list[Math.floor(Math.random() * drink_list.length)] : Food.tap_water;
@@ -377,7 +385,7 @@ export class Order extends GameObjects.Container {
         scene.load.image('woman8', 'face_smile_woman4.png');
         scene.load.image('woman9', 'face_smile_woman5.png');
 
-        scene.load.audio('eat1', '04. 한입.mp3');
+        scene.load.audio('eat1', 'audio/04. 한입.mp3');
     }
 }
 
@@ -441,7 +449,7 @@ class Ingredient extends GameObjects.Container {
 
     static preload(scene: Scene) {
         scene.load.setPath('assets/MainGame');
-        scene.load.audio('ingredient1', '20. 불쑥.mp3');
+        scene.load.audio('ingredient1', 'audio/20. 불쑥.mp3');
         scene.load.image('empty', 'empty.png');
         scene.load.image(IngredientName.RICE_CAKE, 'rice_cake.png');
         scene.load.image(IngredientName.NOODLE, 'noodle.png');
@@ -877,11 +885,11 @@ class Tool extends GameObjects.Container {
 
     static preload(scene: Scene) {
         scene.load.setPath('assets/MainGame');
-        scene.load.audio('fire1', '22. 중간 훅.wav');
-        scene.load.audio('fire2', '23. 중간 훅2.wav');
-        scene.load.audio('trash', '13.훅.mp3');
-        scene.load.audio('tap1', '09. 뿅.mp3');
-        scene.load.audio('tap2', '18. 뾱.mp3');
+        scene.load.audio('fire1', 'audio/22. 중간 훅.wav');
+        scene.load.audio('fire2', 'audio/23. 중간 훅2.wav');
+        scene.load.audio('trash', 'audio/13.훅.mp3');
+        scene.load.audio('tap1', 'audio/09. 뿅.mp3');
+        scene.load.audio('tap2', 'audio/18. 뾱.mp3');
 
         scene.load.image('cup', 'amount_water_glass1.png');
         scene.load.image('cup_water', 'amount_water_glass3.png');
@@ -915,7 +923,7 @@ class Tool extends GameObjects.Container {
         scene.load.image('vapor_2', 'vapor_2.png');
         scene.load.image('vapor_3', 'vapor_3.png');
         scene.load.image('vapor_4', 'vapor_4.png');
-        scene.load.audio('fizz', 'fizz.mp3');
+        scene.load.audio('fizz', 'audio/fizz.mp3');
     }
 }
 class ToolShelf extends GameObjects.Container {
@@ -992,6 +1000,7 @@ export class MainGame extends Scene {
 
     create() {
         const remain_time = 60;
+        // const remain_time = 3;
 
         const background = this.add.image(WIDTH/2, HEIGHT/2 - HEIGHT/7, 'background').setOrigin(0.5);
         background.setScale(Math.max(WIDTH / background.width, HEIGHT / background.height));

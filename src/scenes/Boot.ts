@@ -10,6 +10,7 @@ export class Boot extends Scene {
     }
 
     create() {
+        console.log('억까 신고는 https://cafe.naver.com/virtualidol/3773 에 댓글로 부탁드립니다.');
         this.scene.start("Preloader");
     }
 }
