@@ -53,6 +53,34 @@ class TopBar extends GameObjects.Container {
         }).setOrigin(0.5).setPadding(10);
         this.add([earnText, this.earn_text]);
 
+        // 레시피 확인
+        const recipe_btn = scene.add.text(0, 0, '레시피 보기', {
+            fontSize: height / 1.7,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: 4,
+        }).setOrigin(0.5).setInteractive();
+        recipe_btn.on('pointerup', () => {
+            console.log('click recipe btn');
+            scene.scene.launch('Recipe');
+        })
+        recipe_btn.on('pointerover', () => {
+            scene.tweens.add({
+                targets: recipe_btn,
+                duration: 100,
+                scale: 1.1,
+            });
+        });
+        recipe_btn.on('pointerout', () => {
+            scene.tweens.add({
+                targets: recipe_btn,
+                duration: 100,
+                scale: 1,
+            });
+        });
+        this.add(recipe_btn);
+
         this.remain_timer = scene.time.addEvent({
             delay: 1000,
             callback: () => {
@@ -1041,6 +1069,7 @@ export class MainGame extends Scene {
             this.input.off('pointerdown', game_start);
         }
         this.input.on('pointerup', game_start);
+        // this.scene.launch('Recipe');
     }
 
     static preload(scene: Scene) {

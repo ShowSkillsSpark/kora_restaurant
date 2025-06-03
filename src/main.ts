@@ -32,9 +32,9 @@ const config: Types.Core.GameConfig = {
         Boot,
         Preloader,
         MainMenu,
+        MainGame,
         Recipe,
         Credits,
-        MainGame,
         GameOver,
     ],
 };
