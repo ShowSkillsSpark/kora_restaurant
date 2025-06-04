@@ -18,6 +18,7 @@ class TopBar extends GameObjects.Container {
         this.remain_time = remain_time;
         this.elapsed = 0;
         sessionStorage.setItem('earn', '0');
+        // sessionStorage.setItem('earn', '100000');
 
         // 영업시간
         const timeText = scene.add.text(-width / 4 - 100, 0, '남은 시간', {
@@ -307,8 +308,9 @@ export class Order extends GameObjects.Container {
             this.step = Math.min(this.step + 1, 9);
         } else { // 괴식
             if (this.tap_water_only_flag) { // 수돗물단
-                this.step = Math.min(this.step + 1, 8);
+                this.step = 8;
                 this.cost = 9000;
+                this.updateFace();
             } else this.step = Math.max(this.step - 1, 0);
         }
         this.updateFace();

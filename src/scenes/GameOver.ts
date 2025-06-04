@@ -11,7 +11,7 @@ export class GameOver extends Scene {
         const earn = sessionStorage.getItem('earn') || '0';
         const earn_text = earn.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈';
         const text = this.add.text(WIDTH / 2, 1 * HEIGHT/4, '최종점수: ' + earn_text, {
-            fontSize: HEIGHT / 4,
+            fontSize: HEIGHT / 5,
             color: '#ffffff',
             fontFamily: 'StudyHard',
             stroke: '#000000',
@@ -69,8 +69,10 @@ export class GameOver extends Scene {
             this.sound.play('score_30', {volume: 0.7});
         } else if (earn_number < 35000) {
             this.sound.play('score_35', {volume: 0.7});
-        } else {
+        } else if (earn_number < 100000){
             this.sound.play('score_40', {volume: 0.7});
+        } else {
+            this.sound.play('score_100', {volume: 0.7});
         }
         this.sound.play('GameOver_bgm_' + Math.floor(Math.random() * 4), {volume: 0.3});
     }
@@ -85,6 +87,7 @@ export class GameOver extends Scene {
         scene.load.audio('score_30', 'voice_8.wav');
         scene.load.audio('score_35', 'voice_2.wav');
         scene.load.audio('score_40', 'voice_3.wav');
+        scene.load.audio('score_100', 'voice_11.wav');
         scene.load.audio('GameOver_bgm_0', 'Carpe Diem.mp3');
         scene.load.audio('GameOver_bgm_1', 'Flying Kerfuffle.mp3');
         scene.load.audio('GameOver_bgm_2', 'Carefree.mp3');
