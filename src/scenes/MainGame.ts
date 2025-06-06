@@ -1069,7 +1069,7 @@ export class MainGame extends Scene {
         const game_start = () => {
             // console.debug('Game Start!');
             top_bar.startTimer();
-            this.input.off('pointerdown', game_start);
+            this.input.off('pointerup', game_start);
         }
         this.input.on('pointerup', game_start);
         // this.scene.launch('Recipe');

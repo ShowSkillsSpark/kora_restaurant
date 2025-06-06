@@ -1,5 +1,6 @@
 import { GameObjects, Input, Scene } from 'phaser';
 import { HEIGHT, WIDTH } from '../constants';
+import { version } from '../../package.json';
 
 class Button extends GameObjects.Container {
     constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, text: string) {
@@ -132,6 +133,16 @@ export class MainMenu extends Scene {
         });
         credit_button.setInteractive();
 
+        // 버전
+        this.add.text(WIDTH / 100, HEIGHT, 'v' + version, {
+            fontSize: HEIGHT / 30,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: HEIGHT/300,
+        }).setOrigin(0, 1);
+
+        // bgm
         this.sound.getAllPlaying().forEach((sound) => {
             sound.stop();
         });
