@@ -65,14 +65,6 @@ export class MainMenu extends Scene {
 
     create() {
         // 배경
-        // this.spring = this.add.image(WIDTH/2, HEIGHT/2, '봄').setOrigin(0.5).setScale(0.7);
-        // this.summer = this.add.image(WIDTH/2, HEIGHT/2, '여름').setOrigin(0.5).setScale(0.7);
-        // this.fall = this.add.image(WIDTH/2, HEIGHT/2, '가을').setOrigin(0.5).setScale(0.7);
-        // this.winter = this.add.image(WIDTH/2, HEIGHT/2, '겨울').setOrigin(0.5).setScale(0.7);
-        // this.spring.x = WIDTH/2 + ((this.start_offset + 0) % 4) * this.spring.displayWidth;
-        // this.summer.x = WIDTH/2 + ((this.start_offset + 1) % 4) * this.spring.displayWidth;
-        // this.fall.x = WIDTH/2 + ((this.start_offset + 2) % 4) * this.spring.displayWidth;
-        // this.winter.x = WIDTH/2 + ((this.start_offset + 3) % 4) * this.spring.displayWidth;
         let background_count = Math.floor(Math.random() * 4);
         const background = this.add.image(WIDTH/2, HEIGHT/2, 'MainMenu_background_' + background_count).setOrigin(0.5).setScale(0.7);
         this.time.addEvent({
@@ -84,6 +76,27 @@ export class MainMenu extends Scene {
             loop: true,
             paused: false,
         })
+
+        // 최고점수
+        const high_score = localStorage.getItem('high_score') || '0';
+        const high_score_text = high_score.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        this.add.text(WIDTH, 0, '최고점수: ' + high_score_text + ' 치즈', {
+            fontSize: HEIGHT / 20,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: 4,
+        }).setOrigin(1, 0);
+        const high_score_tap = localStorage.getItem('high_score_tap') || '0';
+        const high_score_tap_text = high_score_tap.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        this.add.text(WIDTH, HEIGHT / 20, '최고점수(수): ' + high_score_tap_text + ' 치즈', {
+            fontSize: HEIGHT / 20,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: 4,
+        }).setOrigin(1, 0);
+        // console.log(high_score, high_score_tap);
 
         // 타이틀
         new Title(this, WIDTH / 2, 3 * HEIGHT / 10);

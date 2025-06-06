@@ -7,12 +7,14 @@ export class GameOver extends Scene {
     }
 
     create() {
+        const tap_water_only_flag = sessionStorage.getItem('tap_water_only') === 'true';
+
         // 점수
         const earn = sessionStorage.getItem('earn') || '0';
         const earn_text = earn.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈';
         const text = this.add.text(WIDTH / 2, 1 * HEIGHT/4, '최종점수: ' + earn_text, {
             fontSize: HEIGHT / 5,
-            color: '#ffffff',
+            color: tap_water_only_flag ? '#ffffdd' : '#ffffff',
             fontFamily: 'StudyHard',
             stroke: '#000000',
             strokeThickness: 4,
@@ -23,7 +25,21 @@ export class GameOver extends Scene {
             duration: 800,
             repeat: -1,
             yoyo: true,
-        })
+        });
+
+        // 최고점수
+        if (tap_water_only_flag) {
+            const high_score_tap = localStorage.getItem('high_score_tap') || '0';
+            localStorage.setItem('high_score_tap', (parseInt(high_score_tap) > parseInt(earn)) ? high_score_tap : earn);
+            // console.log(high_score_tap, earn, parseInt(high_score_tap), parseInt(earn));
+        } else {
+            const high_score = localStorage.getItem('high_score') || '0';
+            localStorage.setItem('high_score', (parseInt(high_score) > parseInt(earn)) ? high_score : earn);
+            // console.log(high_score, earn, parseInt(high_score), parseInt(earn));
+        }
+
+
+
         // 돌아가기
         const back_text = this.add.text(WIDTH / 2, 3 * HEIGHT/4, '돌아가기', {
             fontSize: HEIGHT / 8,
