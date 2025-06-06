@@ -8,6 +8,7 @@ import { Boot } from "./scenes/Boot";
 import { Recipe } from "./scenes/Recipe";
 import { Credits } from "./scenes/Credits";
 import { HEIGHT, WIDTH } from "./constants";
+import { Settings } from "./scenes/Settings";
 
 const config: Types.Core.GameConfig = {
     type: AUTO,
@@ -35,6 +36,7 @@ const config: Types.Core.GameConfig = {
         MainGame,
         Recipe,
         Credits,
+        Settings,
         GameOver,
     ],
 };

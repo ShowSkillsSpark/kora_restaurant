@@ -29,6 +29,9 @@ export class Preloader extends Scene {
         GameOver.preload(this);
     }
     create() {
+        let master_volume = localStorage.getItem('master_volume') || '5';
+        let master_volume_number = parseInt(master_volume);
+        this.sound.setVolume(master_volume_number * 0.2);
         this.scene.start('MainMenu');
     }
 }

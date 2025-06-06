@@ -1067,7 +1067,7 @@ export class MainGame extends Scene {
         this.order_3.newOrder();
 
         const game_start = () => {
-            console.debug('Game Start!');
+            // console.debug('Game Start!');
             top_bar.startTimer();
             this.input.off('pointerdown', game_start);
         }

@@ -91,6 +91,7 @@ export class MainMenu extends Scene {
 
         // 수돗물단 활성화 버튼
         const tap_water_button = this.add.image(WIDTH / 100, HEIGHT/100, 'cup_water').setScale(0.1).setAlpha(tap_water_only_flag ? 1 : 0.6).setOrigin(0).setInteractive().on('pointerup', () => {
+            this.sound.play('tap1', {volume: 0.4});
             tap_water_only_flag = !tap_water_only_flag;
             sessionStorage.setItem('tap_water_only_flag', tap_water_only_flag.toString());
             tap_water_button.setAlpha(tap_water_only_flag ? 1 : 0.6);
@@ -104,7 +105,7 @@ export class MainMenu extends Scene {
 
         const button_offset = 9 * HEIGHT / 20;
         const button_height = HEIGHT / 10;
-        const button_gap = HEIGHT / 20;
+        const button_gap = HEIGHT / 30;
         const button_width = WIDTH / 3;
         // 영업 시작
         new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, '영업 시작').setInteractive().on('pointerup', (pointer: Input.Pointer) => {
@@ -118,8 +119,14 @@ export class MainMenu extends Scene {
             this.scene.launch('Recipe');
         });
 
+        // 환경설정
+        new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, '환경설정').setInteractive().on('pointerup', () => {
+            this.sound.play('tap1', {volume: 0.4});
+            this.scene.launch('Settings');
+        });
+
         // 크레딧
-        const credit_button = new Button(this, WIDTH / 2, button_offset + 3 * (button_height + button_gap) - button_height, button_width, button_height, '크레딧').on('pointerup', () => {
+        const credit_button = new Button(this, WIDTH / 2, button_offset + 4 * (button_height + button_gap) - button_height, button_width, button_height, '크레딧').on('pointerup', () => {
             this.sound.play('tap1', {volume: 0.4});
             this.scene.launch('Credits');
         });
