@@ -78,25 +78,26 @@ export class MainMenu extends Scene {
         })
 
         // 최고점수
-        const high_score = localStorage.getItem('high_score') || '0';
-        const high_score_text = high_score.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        this.add.text(WIDTH, 0, '최고점수: ' + high_score_text + ' 치즈', {
+        let tap_water_only_flag = sessionStorage.getItem('tap_water_only_flag') === 'true';
+        const high_score = localStorage.getItem(tap_water_only_flag ? 'high_score_tap' : 'high_score') || '0';
+        const high_score_str = high_score.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        const high_socre_text = this.add.text(WIDTH - WIDTH / 100, HEIGHT/100, '최고점수: ' + high_score_str + ' 치즈', {
             fontSize: HEIGHT / 20,
-            color: '#ffffff',
+            color: tap_water_only_flag ? '#ffffcc' : '#ffffff',
             fontFamily: 'StudyHard',
             stroke: '#000000',
             strokeThickness: 4,
         }).setOrigin(1, 0);
-        const high_score_tap = localStorage.getItem('high_score_tap') || '0';
-        const high_score_tap_text = high_score_tap.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        this.add.text(WIDTH, HEIGHT / 20, '최고점수(수): ' + high_score_tap_text + ' 치즈', {
-            fontSize: HEIGHT / 20,
-            color: '#ffffff',
-            fontFamily: 'StudyHard',
-            stroke: '#000000',
-            strokeThickness: 4,
-        }).setOrigin(1, 0);
-        // console.log(high_score, high_score_tap);
+
+        // 수돗물단 활성화 버튼
+        const tap_water_button = this.add.image(WIDTH / 100, HEIGHT/100, 'cup_water').setScale(0.1).setAlpha(tap_water_only_flag ? 1 : 0.6).setOrigin(0).setInteractive().on('pointerup', () => {
+            tap_water_only_flag = !tap_water_only_flag;
+            sessionStorage.setItem('tap_water_only_flag', tap_water_only_flag.toString());
+            tap_water_button.setAlpha(tap_water_only_flag ? 1 : 0.6);
+            const high_score = localStorage.getItem(tap_water_only_flag ? 'high_score_tap' : 'high_score') || '0';
+            const high_score_str = high_score.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            high_socre_text.setText('최고점수: ' + high_score_str + ' 치즈').setColor(tap_water_only_flag ? '#ffffcc' : '#ffffff');
+        });
 
         // 타이틀
         new Title(this, WIDTH / 2, 3 * HEIGHT / 10);
@@ -107,8 +108,6 @@ export class MainMenu extends Scene {
         const button_width = WIDTH / 3;
         // 영업 시작
         new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, '영업 시작').setInteractive().on('pointerup', (pointer: Input.Pointer) => {
-            if (pointer.button === 0) sessionStorage.setItem('tap_water_only', 'false');
-            else sessionStorage.setItem('tap_water_only', 'true');
             this.sound.play('welcome_0', {volume: 0.7});
             this.scene.start('MainGame');
         });

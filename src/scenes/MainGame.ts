@@ -63,7 +63,7 @@ class TopBar extends GameObjects.Container {
             strokeThickness: 4,
         }).setOrigin(0.5).setInteractive();
         recipe_btn.on('pointerup', () => {
-            console.log('click recipe btn');
+            // console.log('click recipe btn');
             scene.scene.launch('Recipe');
         })
         recipe_btn.on('pointerover', () => {
@@ -341,7 +341,7 @@ export class Order extends GameObjects.Container {
     }
     randomRequirementList() {
         const requirement_list = [];
-        const tap_water_only = sessionStorage.getItem('tap_water_only');
+        const tap_water_only = sessionStorage.getItem('tap_water_only_flag');
         const food_list = (tap_water_only === 'true') ? [null] : [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
         const drink_list = [Food.tap_water, Food.uru_cider, Food.kora_cola, null];
         // const food_list = [Food.kora_tteokbokki];

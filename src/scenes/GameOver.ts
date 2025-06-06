@@ -7,14 +7,14 @@ export class GameOver extends Scene {
     }
 
     create() {
-        const tap_water_only_flag = sessionStorage.getItem('tap_water_only') === 'true';
+        const tap_water_only_flag = sessionStorage.getItem('tap_water_only_flag') === 'true';
 
         // 점수
         const earn = sessionStorage.getItem('earn') || '0';
         const earn_text = earn.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈';
         const text = this.add.text(WIDTH / 2, 1 * HEIGHT/4, '최종점수: ' + earn_text, {
             fontSize: HEIGHT / 5,
-            color: tap_water_only_flag ? '#ffffdd' : '#ffffff',
+            color: tap_water_only_flag ? '#ffffcc' : '#ffffff',
             fontFamily: 'StudyHard',
             stroke: '#000000',
             strokeThickness: 4,
