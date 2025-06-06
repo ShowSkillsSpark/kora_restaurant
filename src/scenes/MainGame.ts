@@ -341,7 +341,8 @@ export class Order extends GameObjects.Container {
     }
     randomRequirementList() {
         const requirement_list = [];
-        const food_list = [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
+        const tap_water_only = sessionStorage.getItem('tap_water_only');
+        const food_list = (tap_water_only === 'true') ? [null] : [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
         const drink_list = [Food.tap_water, Food.uru_cider, Food.kora_cola, null];
         // const food_list = [Food.kora_tteokbokki];
         // const food_list = [null];

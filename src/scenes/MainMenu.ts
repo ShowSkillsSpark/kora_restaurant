@@ -1,4 +1,4 @@
-import { GameObjects, Scene } from 'phaser';
+import { GameObjects, Input, Scene } from 'phaser';
 import { HEIGHT, WIDTH } from '../constants';
 
 class Button extends GameObjects.Container {
@@ -93,7 +93,9 @@ export class MainMenu extends Scene {
         const button_gap = HEIGHT / 20;
         const button_width = WIDTH / 3;
         // 영업 시작
-        new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, '영업 시작').setInteractive().on('pointerup', () => {
+        new Button(this, WIDTH / 2, button_offset + 1 * (button_height + button_gap) - button_height, button_width, button_height, '영업 시작').setInteractive().on('pointerup', (pointer: Input.Pointer) => {
+            if (pointer.button === 0) sessionStorage.setItem('tap_water_only', 'false');
+            else sessionStorage.setItem('tap_water_only', 'true');
             this.sound.play('welcome_0', {volume: 0.7});
             this.scene.start('MainGame');
         });

@@ -30,8 +30,16 @@ export class GameOver extends Scene {
             color: '#ff0000',
             fontFamily: 'StudyHard',
         }).setOrigin(0.5);
+        back_text.visible = false;
 
-        back_text.setInteractive();
+        this.time.addEvent({
+            delay: 1500,
+            callback: () => {
+                back_text.visible = true;
+                back_text.setInteractive();
+            },
+            loop: false,
+        });
         back_text.on('pointerup', () => {
             this.sound.play('tap1', {volume: 0.4});
             this.scene.start('MainMenu');
