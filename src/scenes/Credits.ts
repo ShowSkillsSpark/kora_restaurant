@@ -30,7 +30,8 @@ class Content extends GameObjects.Container {
         const music_licence_text = `"Carefree", "Carpe Diem", "Fig Leaf Rag", "Five Card Shuffle", "Flying Kerfuffle", "Hyperfun", "Look Busy", "Pixel Peeker Polka - faster", "Radio Martini", "Wallpaper"
 Kevin MacLeod (incompetech.com)
 Licensed under Creative Commons: By Attribution 3.0
-http://creativecommons.org/licenses/by/3.0/`
+http://creativecommons.org/licenses/by/3.0/
+Sound Effect by irinairinafomicheva from Pixabay`
         this.add([
             new Card(scene, 0, HEIGHT / 4, '기획/개발', '실력발휘'),
             new Card(scene, 0, HEIGHT / 4 + HEIGHT * 3 / 5, '목소리', '하야사카 레이'),

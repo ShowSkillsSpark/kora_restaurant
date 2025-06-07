@@ -9,6 +9,38 @@ export class GameOver extends Scene {
     create() {
         const tap_water_only_flag = sessionStorage.getItem('tap_water_only_flag') === 'true';
 
+        // 스크린샷
+        const screenshot_btn = this.add.text(0, 0, ' 찰칵! ', {
+            fontSize: HEIGHT / 20,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: 2,
+        }).setOrigin(0, 0).setInteractive();
+        screenshot_btn.on('pointerup', () => {
+            const uri = this.game.canvas.toDataURL('image/png');
+            const name = 'kora_restaurant_' + Date.now() + '.png';
+            const a_element = document.createElement('a')
+            a_element.download = name;
+            a_element.href = uri;
+            a_element.click();
+            this.sound.play('screenshot', {volume: 0.4});
+        });
+        screenshot_btn.on('pointerover', () => {
+            this.scene.scene.tweens.add({
+                targets: screenshot_btn,
+                scale: 0.8,
+                duration: 50,
+            });
+        });
+        screenshot_btn.on('pointerout', () => {
+            this.scene.scene.tweens.add({
+                targets: screenshot_btn,
+                scale: 1,
+                duration: 50,
+            });
+        });
+
         // 점수
         const earn = sessionStorage.getItem('earn') || '0';
         const earn_text = earn.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 치즈';
@@ -37,8 +69,6 @@ export class GameOver extends Scene {
             localStorage.setItem('high_score', (parseInt(high_score) > parseInt(earn)) ? high_score : earn);
             // console.log(high_score, earn, parseInt(high_score), parseInt(earn));
         }
-
-
 
         // 돌아가기
         const back_text = this.add.text(WIDTH / 2, 3 * HEIGHT/4, '돌아가기', {
@@ -116,5 +146,6 @@ export class GameOver extends Scene {
         scene.load.audio('GameOver_bgm_1', 'Flying Kerfuffle.mp3');
         scene.load.audio('GameOver_bgm_2', 'Carefree.mp3');
         scene.load.audio('GameOver_bgm_3', 'Pixel Peeker Polka - faster.mp3');
+        scene.load.audio('screenshot', 'camera-13695.mp3');
     }
 }

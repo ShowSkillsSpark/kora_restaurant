@@ -24,6 +24,7 @@ const config: Types.Core.GameConfig = {
         autoCenter: Scale.CENTER_BOTH,
     },
     fullscreenTarget: 'game-container',
+    preserveDrawingBuffer: true,
     // physics: {
     //     default: "arcade",
     //     arcade: {
