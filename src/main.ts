@@ -23,6 +23,7 @@ const config: Types.Core.GameConfig = {
         mode: Scale.FIT,
         autoCenter: Scale.CENTER_BOTH,
     },
+    fullscreenTarget: 'game-container',
     // physics: {
     //     default: "arcade",
     //     arcade: {
@@ -44,9 +45,4 @@ const config: Types.Core.GameConfig = {
 let game: Game;
 document.addEventListener("DOMContentLoaded", () => {
     game = new Game(config);
-    // game.scale.on('orientationchange', () => {
-    //     game.scale.scaleMode = Scale.FIT
-    // });
 });
-// window.addEventListener('deviceorientation', () => {
-// });

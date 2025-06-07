@@ -82,6 +82,32 @@ class TopBar extends GameObjects.Container {
         });
         this.add(recipe_btn);
 
+        // 게임 포기
+        const finish_btn = scene.add.text(width/2 - width/100, 0, '영업종료', {
+            fontSize: height / 1.7,
+            color: '#ffffff',
+            fontFamily: 'StudyHard',
+            stroke: '#000000',
+            strokeThickness: 4,
+        }).setOrigin(1, 0.5).setInteractive().on('pointerdown', () => {
+            scene.scene.start('GameOver');
+        });
+        finish_btn.on('pointerover', () => {
+            scene.tweens.add({
+                targets: finish_btn,
+                duration: 100,
+                scale: 1.1,
+            });
+        });
+        finish_btn.on('pointerout', () => {
+            scene.tweens.add({
+                targets: finish_btn,
+                duration: 100,
+                scale: 1,
+            });
+        });
+        this.add(finish_btn);
+
         this.remain_timer = scene.time.addEvent({
             delay: 1000,
             callback: () => {
@@ -204,6 +230,7 @@ export class Order extends GameObjects.Container {
     requirement_list: Food[] = [];
     tool_list: Tool[] = [];
     cost: number = 0;
+    zone: GameObjects.Zone;
 
     face: GameObjects.Image;
     gender: string = 'man';
@@ -245,10 +272,10 @@ export class Order extends GameObjects.Container {
         this.initFace();
         this.updateFace();
 
-        const zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('order');
-        zone.setData('order', this);
+        this.zone = scene.add.zone(0, 0, width, height).setRectangleDropZone(width, height).setName('order');
+        this.zone.setData('order', this);
 
-        this.add([this.cost_text, this.text_bg, this.text, this.face, zone]);
+        this.add([this.cost_text, this.text_bg, this.text, this.face, this.zone]);
 
         this.progress_timer = scene.time.addEvent({
             delay: 1000,
@@ -344,7 +371,6 @@ export class Order extends GameObjects.Container {
         const tap_water_only = sessionStorage.getItem('tap_water_only_flag');
         const food_list = (tap_water_only === 'true') ? [null] : [Food.kora_tteokbokki, Food.jako_ramen, Food.nande_sundae, Food.daedu_dumpling, null, null, null];
         const drink_list = [Food.tap_water, Food.uru_cider, Food.kora_cola, null];
-        // const food_list = [Food.kora_tteokbokki];
         // const food_list = [null];
         // const drink_list = [null];
         const food = food_list[Math.floor(Math.random() * food_list.length)];
@@ -383,6 +409,7 @@ export class Order extends GameObjects.Container {
         this.tap_water_only_flag = (this.requirement_list.length == 1 && this.requirement_list[0] === Food.tap_water);
     }
     set hide(flag: boolean) {
+        flag ? this.zone.disableInteractive() : this.zone.setInteractive();
         this.text_bg.visible = !flag;
         this.text.visible = !flag;
         this.face.visible = !flag;
@@ -1040,15 +1067,18 @@ export class MainGame extends Scene {
         // 탑바
         // this.add.rectangle(WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xff00ff, 1).setStrokeStyle(5, 0x000000);
         const top_bar = new TopBar(this, WIDTH / 2, 1 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, remain_time);
+
         // 주문서
         // this.add.rectangle(WIDTH / 2, 5 * HEIGHT / 20, WIDTH, 3 * HEIGHT / 10, 0x00ffff, 1).setStrokeStyle(5, 0x000000);
-        this.order_0 = new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+        const order_width = WIDTH / 4;
+        const order_height = 4 * HEIGHT / 10 - HEIGHT / 20;
+        this.order_0 = new Order(this, 1 * WIDTH / 8, 5 * HEIGHT / 20, order_width, order_height,
             (price) => top_bar.addEarn(price));
-        this.order_1 = new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+        this.order_1 = new Order(this, 3 * WIDTH / 8, 5 * HEIGHT / 20, order_width, order_height,
             (price) => top_bar.addEarn(price));
-        this.order_2 = new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+        this.order_2 = new Order(this, 5 * WIDTH / 8, 5 * HEIGHT / 20, order_width, order_height,
             (price) => top_bar.addEarn(price));
-        this.order_3 = new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, WIDTH / 4, 4 * HEIGHT / 10,
+        this.order_3 = new Order(this, 7 * WIDTH / 8, 5 * HEIGHT / 20, order_width, order_height,
             (price) => top_bar.addEarn(price));
         // 책상
         // this.add.rectangle(WIDTH / 2, 9 * HEIGHT / 20, WIDTH, 1 * HEIGHT / 10, 0xffffff, 1).setStrokeStyle(5, 0x000000);
