@@ -78,8 +78,178 @@ export class GameOver extends Scene {
         }).setOrigin(0.5);
         back_text.visible = false;
 
+        this.sound.getAllPlaying().forEach((sound) => {
+            sound.stop();
+        });
+        const earn_number = parseInt(earn);
+        // const earn_number = 200000;
+        let back_text_delay = 1500;
+        if (earn_number < 5000) {
+            this.sound.play('score_05', {volume: 0.7});
+            const crying_rei = this.add.image(WIDTH, HEIGHT*1.5, 'crying_rei').setOrigin(1).setScale(1.4).setToBack();
+            this.add.tween({
+                targets : crying_rei,
+                ease: 'Bounce',
+                duration: 800,
+                props: {
+                    y: HEIGHT*1,
+                },
+            });
+        } else if (earn_number < 10000) {
+            this.sound.play('score_10', {volume: 0.7});
+        } else if (earn_number < 15000) {
+            this.sound.play('score_15', {volume: 0.7});
+        } else if (earn_number < 20000) {
+            this.sound.play('score_20', {volume: 0.7});
+        } else if (earn_number < 25000) {
+            this.sound.play('score_25', {volume: 0.7});
+        } else if (earn_number < 30000) {
+            this.sound.play('score_30', {volume: 0.7});
+        } else if (earn_number < 35000) {
+            this.sound.play('score_35', {volume: 0.7});
+        } else if (earn_number < 100000){
+            this.sound.play('score_40', {volume: 0.7});
+        } else if (earn_number < 131600) {
+            const x_offset = -WIDTH;
+            const rei = this.add.image(x_offset, HEIGHT*1.6, 'victory_rei').setOrigin(0.5, 1).setScale(0.9).setToBack();
+            this.add.tween({
+                targets: rei,
+                yoyo: true,
+                delay: 3300,
+                duration: 1000,
+                angle: 7,
+                ease: 'Back',
+            });
+            this.add.tween({
+                targets: rei,
+                duration: 1000,
+                ease: 'Cubic',
+                props: {
+                    x: {
+                        value: WIDTH/8,
+                    }
+                },
+            });
+            this.add.tween({
+                targets: rei,
+                delay: 5000,
+                duration: 500,
+                ease: 'Cubic',
+                props: {
+                    y: {
+                        value: HEIGHT*1.4,
+                    }
+                },
+                yoyo: true,
+                repeat: -1,
+            });
+            this.sound.play('score_100', {volume: 0.7});
+        } else {
+            const x_offset = WIDTH/8;
+            const y_offset = HEIGHT*0.9;
+            const arm = this.add.image(x_offset, y_offset, 'moe_rei_arm').setOrigin(0.5).setScale(1.2).setToBack();
+            const body = this.add.image(x_offset, y_offset, 'moe_rei_body').setOrigin(0.5).setScale(1.2).setToBack();
+            const cat = this.add.image(WIDTH*3/4, HEIGHT*5/7, 'moe_rei_cat').setOrigin(0.45, 0.55).setScale(20);
+            this.add.tween({
+                targets: [arm, body],
+                yoyo: true,
+                duration: 1500,
+                repeatDelay: 1000,
+                angle: -2,
+                scaleX: 0.5,
+                scaleY: 0.5,
+                ease: 'Cubic',
+            });
+            this.add.tween({
+                targets: [arm, body],
+                yoyo: true,
+                delay: 3200,
+                duration: 300,
+                props: {
+                    x: {
+                        value: WIDTH/2.5,
+                    },
+                },
+                ease: 'Back',
+            });
+            const jump_delay = 180;
+            this.add.tween({
+                targets: [arm, body],
+                yoyo: true,
+                delay: 5000,
+                duration: 500,
+                repeatDelay: jump_delay,
+                repeat: -1,
+                angle: 2,
+                props: {
+                    y: {
+                        value: y_offset - HEIGHT/4,
+                    },
+                },
+                ease: 'Cubic',
+            });
+            this.add.tween({
+                targets: [arm],
+                yoyo: true,
+                delay: 5000,
+                duration: 500,
+                repeatDelay: jump_delay,
+                repeat: -1,
+                props: {
+                    x: {
+                        value: x_offset + WIDTH/10,
+                    },
+                    y: {
+                        value: y_offset - HEIGHT/4 + HEIGHT/20,
+                    },
+                },
+                ease: 'Cubic',
+            });
+            this.add.tween({
+                targets: [arm],
+                yoyo: true,
+                delay: 5000,
+                duration: 500,
+                repeatDelay: jump_delay,
+                repeat: -1,
+                angle: 10,
+                ease: 'Cubic',
+            });
+            this.add.tween({
+                targets: [body],
+                yoyo: true,
+                delay: 5000,
+                duration: 500,
+                repeatDelay: jump_delay,
+                repeat: -1,
+                angle: -5,
+                ease: 'Cubic',
+            });
+            this.add.tween({
+                targets: cat,
+                delay: 1000,
+                duration: 500,
+                angle: -1,
+                scaleX: 1.5,
+                scaleY: 1.5,
+                ease: 'Bounce',
+            });
+            this.add.tween({
+                targets: cat,
+                delay: 4000,
+                duration: 500,
+                angle: -360,
+                repeat: -1,
+                repeatDelay: 2000,
+                ease: 'Linear',
+            });
+            this.sound.play('score_100', {volume: 0.7});
+            back_text.setAlpha(0.7);
+            back_text_delay = 7000;
+        }
+
         this.time.addEvent({
-            delay: 1500,
+            delay: back_text_delay,
             callback: () => {
                 back_text.visible = true;
                 back_text.setInteractive();
@@ -105,29 +275,6 @@ export class GameOver extends Scene {
             });
         });
 
-        this.sound.getAllPlaying().forEach((sound) => {
-            sound.stop();
-        });
-        const earn_number = parseInt(earn);
-        if (earn_number < 5000) {
-            this.sound.play('score_05', {volume: 0.7});
-        } else if (earn_number < 10000) {
-            this.sound.play('score_10', {volume: 0.7});
-        } else if (earn_number < 15000) {
-            this.sound.play('score_15', {volume: 0.7});
-        } else if (earn_number < 20000) {
-            this.sound.play('score_20', {volume: 0.7});
-        } else if (earn_number < 25000) {
-            this.sound.play('score_25', {volume: 0.7});
-        } else if (earn_number < 30000) {
-            this.sound.play('score_30', {volume: 0.7});
-        } else if (earn_number < 35000) {
-            this.sound.play('score_35', {volume: 0.7});
-        } else if (earn_number < 100000){
-            this.sound.play('score_40', {volume: 0.7});
-        } else {
-            this.sound.play('score_100', {volume: 0.7});
-        }
         this.sound.play('GameOver_bgm_' + Math.floor(Math.random() * 4), {volume: 0.3});
     }
 
@@ -147,5 +294,10 @@ export class GameOver extends Scene {
         scene.load.audio('GameOver_bgm_2', 'Carefree.mp3');
         scene.load.audio('GameOver_bgm_3', 'Pixel Peeker Polka - faster.mp3');
         scene.load.audio('screenshot', 'camera-13695.mp3');
+        scene.load.image('crying_rei', '뿌엥레이.png');
+        scene.load.image('victory_rei', '이온사이다 rei19.png');
+        scene.load.image('moe_rei_body', '이온사이다 rei19_ver.2 몸.png');
+        scene.load.image('moe_rei_arm', '이온사이다 rei19_ver.2 팔.png');
+        scene.load.image('moe_rei_cat', '이온사이다 rei19_ver.2 고양이.png');
     }
 }

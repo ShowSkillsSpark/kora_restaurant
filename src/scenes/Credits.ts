@@ -35,8 +35,9 @@ Sound Effect by irinairinafomicheva from Pixabay`
         this.add([
             new Card(scene, 0, HEIGHT / 4, '기획/개발', '실력발휘'),
             new Card(scene, 0, HEIGHT / 4 + HEIGHT * 3 / 5, '목소리', '하야사카 레이'),
-            new Card(scene, 0, HEIGHT / 4 + HEIGHT * 3 / 5 * 2, '효과음 제공', '피디님'),
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 3, '출처 표기', {
+            new Card(scene, 0, HEIGHT / 4 + HEIGHT * 3 / 5 * 2, '레이 팬아트', '이온사이다 님'),
+            new Card(scene, 0, HEIGHT / 4 + HEIGHT * 3 / 5 * 3, '효과음 제공', '피디님'),
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 4, '출처 표기', {
                 fontSize: HEIGHT / 16,
                 color: '#000000',
                 fontFamily: 'NoonnuBasicGothicRegular',
@@ -44,7 +45,7 @@ Sound Effect by irinairinafomicheva from Pixabay`
                     width: width * 0.9,
                 }
             }).setOrigin(0.5).setPadding(10),
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 3 + HEIGHT / 4.5, [font_licence_text, music_licence_text], {
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 4 + HEIGHT / 4.5, [font_licence_text, music_licence_text], {
                 fontSize: HEIGHT / 32,
                 color: '#000000',
                 align: 'center',
@@ -54,22 +55,22 @@ Sound Effect by irinairinafomicheva from Pixabay`
                 }
             }).setOrigin(0.5).setPadding(10),
 
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 4, '.', {
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 5, '.', {
                 fontSize: HEIGHT / 16,
                 color: '#000000',
                 fontFamily: 'ChosunGs',
             }).setOrigin(0.5).setPadding(10),
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 4.2, '.', {
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 5.2, '.', {
                 fontSize: HEIGHT / 16,
                 color: '#000000',
                 fontFamily: 'ChosunGs',
             }).setOrigin(0.5).setPadding(10),
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 4.4, '.', {
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 5.4, '.', {
                 fontSize: HEIGHT / 16,
                 color: '#000000',
                 fontFamily: 'ChosunGs',
             }).setOrigin(0.5).setPadding(10),
-            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 5, '끝으로...\n게임 제작을 허락해주신 피디님께\n다시 한 번 감사드립니다.', {
+            scene.add.text(0, HEIGHT / 4 + HEIGHT * 3 / 5 * 6, '끝으로...\n게임 제작을 허락해주신 피디님께\n다시 한 번 감사드립니다.', {
                 fontSize: HEIGHT / 16,
                 color: '#000000',
                 fontFamily: 'ChosunGs',
@@ -120,7 +121,7 @@ export class Credits extends Scene {
 
     update() {
         if (this.content) {
-            if (this.content.y > -HEIGHT*2.8) this.content.y -= 2;
+            if (this.content.y > -HEIGHT*3.4) this.content.y -= 2;
         }
     }
 }
