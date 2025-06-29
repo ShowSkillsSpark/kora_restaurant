@@ -111,7 +111,7 @@ export class GameOver extends Scene {
             this.sound.play('score_40', {volume: 0.7});
         } else if (earn_number < 131600) {
             const x_offset = -WIDTH;
-            const rei = this.add.image(x_offset, HEIGHT*1.6, 'victory_rei').setOrigin(0.5, 1).setScale(0.9).setToBack();
+            const rei = this.add.image(x_offset, HEIGHT*1.6, 'victory_rei').setOrigin(0.5, 1).setScale(1).setToBack();
             this.add.tween({
                 targets: rei,
                 yoyo: true,
@@ -149,7 +149,6 @@ export class GameOver extends Scene {
             const y_offset = HEIGHT*0.9;
             const arm = this.add.image(x_offset, y_offset, 'moe_rei_arm').setOrigin(0.5).setScale(1.2).setToBack();
             const body = this.add.image(x_offset, y_offset, 'moe_rei_body').setOrigin(0.5).setScale(1.2).setToBack();
-            const cat = this.add.image(WIDTH*3/4, HEIGHT*5/7, 'moe_rei_cat').setOrigin(0.45, 0.55).setScale(20);
             this.add.tween({
                 targets: [arm, body],
                 yoyo: true,
@@ -167,7 +166,7 @@ export class GameOver extends Scene {
                 duration: 300,
                 props: {
                     x: {
-                        value: WIDTH/2.5,
+                        value: WIDTH/3,
                     },
                 },
                 ease: 'Back',
@@ -225,24 +224,54 @@ export class GameOver extends Scene {
                 angle: -5,
                 ease: 'Cubic',
             });
+
+            const cat = this.add.image(WIDTH*14/16, HEIGHT*2/3, 'moe_rei_cat').setOrigin(0.5).setScale(15);
             this.add.tween({
                 targets: cat,
                 delay: 1000,
                 duration: 500,
                 angle: -1,
-                scaleX: 1.5,
-                scaleY: 1.5,
+                scaleX: 0.8,
+                scaleY: 0.8,
                 ease: 'Bounce',
             });
             this.add.tween({
                 targets: cat,
                 delay: 4000,
                 duration: 500,
-                angle: -360,
+                angle: 360,
                 repeat: -1,
                 repeatDelay: 2000,
                 ease: 'Linear',
             });
+
+            const moemoe = this.anims.create({
+                key: 'moemoe',
+                frames: [
+                    { key: 'moemoe_1' },
+                    { key: 'moemoe_2' },
+                    { key: 'moemoe_3' },
+                    { key: 'moemoe_4' },
+                    { key: 'moemoe_5' },
+                    { key: 'moemoe_6' },
+                    { key: 'moemoe_7' },
+                    // { key: 'moemoe_8' },
+                ],
+                frameRate: 5,
+                delay: 2200,
+            });
+            this.add.sprite(WIDTH*10/16, HEIGHT*9/16, 'moe_heart').setScale(4).setAngle(-10).setToBack().play('moemoe');
+
+            this.add.tween({
+                targets: cat,
+                delay: 4000,
+                duration: 500,
+                angle: 360,
+                repeat: -1,
+                repeatDelay: 2000,
+                ease: 'Linear',
+            });
+
             this.sound.play('score_100', {volume: 0.7});
             back_text.setAlpha(0.7);
             back_text_delay = 7000;
@@ -295,9 +324,18 @@ export class GameOver extends Scene {
         scene.load.audio('GameOver_bgm_3', 'Pixel Peeker Polka - faster.mp3');
         scene.load.audio('screenshot', 'camera-13695.mp3');
         scene.load.image('crying_rei', '뿌엥레이.png');
-        scene.load.image('victory_rei', '이온사이다 rei19.png');
-        scene.load.image('moe_rei_body', '이온사이다 rei19_ver.2 몸.png');
-        scene.load.image('moe_rei_arm', '이온사이다 rei19_ver.2 팔.png');
+        scene.load.image('victory_rei', '이온사이다 1234.png');
+        scene.load.image('moe_rei_body', '이온사이다 123 몸.png');
+        scene.load.image('moe_rei_arm', '이온사이다 123 팔.png');
         scene.load.image('moe_rei_cat', '이온사이다 rei19_ver.2 고양이.png');
+        scene.load.image('moemoe_1', '이온사이다 123 모에모에 1.png');
+        scene.load.image('moemoe_2', '이온사이다 123 모에모에 2.png');
+        scene.load.image('moemoe_3', '이온사이다 123 모에모에 3.png');
+        scene.load.image('moemoe_4', '이온사이다 123 모에모에 4.png');
+        scene.load.image('moemoe_5', '이온사이다 123 모에모에 5.png');
+        scene.load.image('moemoe_6', '이온사이다 123 모에모에 6.png');
+        scene.load.image('moemoe_7', '이온사이다 123 모에모에 7.png');
+        scene.load.image('moemoe_8', '이온사이다 123 모에모에 8.png');
+        scene.load.image('moe_heart', '이온사이다 123 heart.png');
     }
 }
